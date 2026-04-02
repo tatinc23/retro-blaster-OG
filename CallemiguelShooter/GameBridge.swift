@@ -2,6 +2,7 @@ import WebKit
 
 /// Receives messages posted from JavaScript via:
 ///   window.webkit.messageHandlers.stripeCheckout.postMessage({priceId: "...", gems: N})
+/// The handler name "stripeCheckout" is kept for JS compatibility.
 class GameBridge: NSObject, WKScriptMessageHandler {
 
     weak var viewController: ViewController?
@@ -12,10 +13,10 @@ class GameBridge: NSObject, WKScriptMessageHandler {
     ) {
         guard message.name == "stripeCheckout",
               let body = message.body as? [String: Any],
-              let priceId = body["priceId"] as? String,
-              let gems = body["gems"] as? Int
+              let priceId = body["priceId"] as? String
         else { return }
 
-        StripeHandler.shared.openCheckout(priceId: priceId, gems: gems, from: viewController)
+        // Route to Apple IAP
+        StoreKitHandler.shared.purchase(priceId: priceId)
     }
 }
