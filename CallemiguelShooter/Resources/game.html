@@ -8,8 +8,8 @@
 <title>Retro Blaster</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-html,body{width:100%;height:100%;overflow:hidden;background:#020814;touch-action:none;user-select:none;position:fixed;}
-#wrap{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;height:100%;max-width:480px;overflow:hidden;background:#020814;}
+html,body{width:100%;height:100%;min-height:-webkit-fill-available;overflow:hidden;background:#020814;touch-action:none;user-select:none;position:fixed;}
+#wrap{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;height:100%;height:100dvh;max-width:480px;overflow:hidden;background:#020814;}
 #gc{display:block;width:100%;height:100%;touch-action:none;cursor:none;position:absolute;top:0;left:0;z-index:0;}
 #score-hud{position:absolute;top:12px;left:12px;color:#0ff;font-family:'Courier New',monospace;font-size:13px;pointer-events:none;text-shadow:0 0 8px #0ff,0 0 16px rgba(0,255,255,0.4);letter-spacing:1px;transition:transform 0.12s cubic-bezier(0.34,1.56,0.64,1);}
 #score-hud.pop{transform:scale(1.35);}
@@ -32,15 +32,25 @@ html,body{width:100%;height:100%;overflow:hidden;background:#020814;touch-action
 #wave-banner.slide-out{transition:transform 0.35s ease-in;transform:translateX(-110%);}
 #powerup-msg{position:absolute;top:42%;left:50%;transform:translate(-50%,-50%);color:#ff0;font-family:'Courier New',monospace;font-size:16px;font-weight:bold;pointer-events:none;opacity:0;transition:opacity 0.3s;text-shadow:0 0 12px #f80;letter-spacing:2px;white-space:nowrap;}
 #shop-btn{position:absolute;bottom:14px;right:14px;background:rgba(10,20,50,0.85);color:#6af;border:1px solid rgba(40,100,200,0.5);padding:8px 16px;font-size:11px;border-radius:20px;cursor:pointer;font-family:'Courier New',monospace;backdrop-filter:blur(6px);letter-spacing:1px;z-index:5;}
-#overlay{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,4,14,0.92);backdrop-filter:blur(2px);z-index:10;}
-.title-main{font-family:'Courier New',monospace;color:#4af;font-size:clamp(1.8rem,6vw,2.4rem);letter-spacing:6px;margin-bottom:4px;text-shadow:0 0 20px #4af,0 0 40px rgba(80,180,255,0.3);animation:titleFloat 3s ease-in-out infinite;}
-.title-sub{font-family:'Courier New',monospace;color:#6cf;font-size:1rem;letter-spacing:4px;margin-bottom:24px;text-shadow:0 0 10px rgba(100,200,255,0.5);}
-.title-hint{font-family:'Courier New',monospace;color:#3a7;font-size:11px;margin-bottom:4px;letter-spacing:0.5px;}
-.btn-primary{background:linear-gradient(135deg,#1050a0,#1a70c8);color:#fff;border:1px solid rgba(100,180,255,0.4);padding:14px 48px;font-size:1.1rem;border-radius:30px;cursor:pointer;font-family:'Courier New',monospace;letter-spacing:3px;margin-bottom:10px;box-shadow:0 0 20px rgba(20,80,200,0.4),inset 0 1px 0 rgba(255,255,255,0.1);transition:transform 0.1s;}
-.btn-primary:active{transform:scale(0.97);}
-.btn-secondary{background:rgba(10,20,50,0.8);color:#8af;border:1px solid rgba(40,100,200,0.4);padding:10px 28px;font-size:0.95rem;border-radius:30px;cursor:pointer;font-family:'Courier New',monospace;margin-bottom:8px;letter-spacing:1px;transition:transform 0.1s;}
-.btn-secondary:active{transform:scale(0.97);}
-#hs-display{color:#fa0;font-family:'Courier New',monospace;font-size:13px;}
+#overlay{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 28px;background:linear-gradient(180deg,#000810 0%,#010d20 50%,#000810 100%);z-index:10;overflow:hidden;}
+#overlay::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,200,255,0.018) 2px,rgba(0,200,255,0.018) 4px);pointer-events:none;z-index:1;}
+#overlay::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(0,80,180,0.18) 0%,transparent 70%);pointer-events:none;z-index:1;}
+#overlay-canvas{position:absolute;inset:0;z-index:0;opacity:0.7;}
+.overlay-content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;width:100%;gap:0;}
+.title-wrap{position:relative;margin-bottom:6px;}
+.title-main{font-family:'Courier New',monospace;color:#e8f4ff;font-size:clamp(3.5rem,14vw,5rem);letter-spacing:10px;line-height:1;text-shadow:0 0 30px rgba(80,180,255,0.9),0 0 60px rgba(40,120,255,0.5),0 0 100px rgba(0,80,200,0.3);animation:titlePulse 2.5s ease-in-out infinite;display:block;}
+.title-main::before{content:'RETRO';position:absolute;left:2px;top:1px;color:rgba(255,60,120,0.35);letter-spacing:10px;pointer-events:none;}
+.title-main::after{content:'RETRO';position:absolute;left:-2px;top:-1px;color:rgba(0,255,220,0.25);letter-spacing:10px;pointer-events:none;}
+.title-sub{font-family:'Courier New',monospace;color:#5ad;font-size:clamp(0.9rem,4vw,1.2rem);letter-spacing:16px;margin-bottom:10px;text-transform:uppercase;text-shadow:0 0 12px rgba(60,160,220,0.6);}
+.title-divider{width:160px;height:1px;background:linear-gradient(90deg,transparent,rgba(0,200,255,0.6),transparent);margin:0 auto 24px;}
+.title-hint{font-family:'Courier New',monospace;color:rgba(80,160,120,0.7);font-size:11px;margin-bottom:6px;letter-spacing:0.5px;}
+.btn-primary{position:relative;background:transparent;color:#fff;border:2px solid rgba(0,200,255,0.8);padding:18px 0;font-size:1rem;border-radius:3px;cursor:pointer;font-family:'Courier New',monospace;letter-spacing:4px;margin-bottom:11px;width:100%;max-width:300px;box-shadow:0 0 18px rgba(0,180,255,0.35),inset 0 0 18px rgba(0,100,200,0.15);transition:all 0.12s;overflow:hidden;text-shadow:0 0 10px rgba(0,220,255,0.8);}
+.btn-primary::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,100,200,0.4),rgba(0,160,255,0.2));transition:opacity 0.12s;}
+.btn-primary:active{transform:scale(0.97);box-shadow:0 0 8px rgba(0,180,255,0.2),inset 0 0 30px rgba(0,100,200,0.4);}
+.btn-secondary{position:relative;background:transparent;color:rgba(100,160,220,0.8);border:1px solid rgba(40,100,180,0.5);padding:15px 0;font-size:0.85rem;border-radius:3px;cursor:pointer;font-family:'Courier New',monospace;margin-bottom:10px;letter-spacing:3px;width:100%;max-width:300px;transition:all 0.12s;box-shadow:inset 0 0 12px rgba(0,60,140,0.1);}
+.btn-secondary:active{transform:scale(0.97);background:rgba(0,60,140,0.3);}
+#hs-display{color:rgba(255,160,0,0.75);font-family:'Courier New',monospace;font-size:12px;margin-top:12px;letter-spacing:2px;}
+@keyframes titlePulse{0%,100%{text-shadow:0 0 30px rgba(80,180,255,0.9),0 0 60px rgba(40,120,255,0.5),0 0 100px rgba(0,80,200,0.3);}50%{text-shadow:0 0 40px rgba(120,210,255,1),0 0 80px rgba(60,160,255,0.7),0 0 120px rgba(20,100,255,0.4);}}
 #pause-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,4,14,0.85);display:none;flex-direction:column;align-items:center;justify-content:center;backdrop-filter:blur(4px);z-index:10;}
 #shop-panel{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(2,5,18,0.97);display:none;flex-direction:column;align-items:center;padding:20px 16px;overflow-y:auto;z-index:10;}
 .sitem{background:rgba(8,18,45,0.9);border:1px solid rgba(30,70,160,0.4);border-radius:8px;padding:9px 14px;margin:3px 0;width:100%;display:flex;justify-content:space-between;align-items:center;gap:8px;}
@@ -99,19 +109,24 @@ html,body{width:100%;height:100%;overflow:hidden;background:#020814;touch-action
   </div>
   <div id="wave-banner"><div id="wave-banner-inner">WAVE 1</div></div>
   <div id="powerup-msg"></div>
-  <button id="shop-btn" onclick="openShop()">&#x1F6D2; SHOP</button>
+  <button id="shop-btn" onclick="openShop()">SHOP</button>
   <div id="flash-overlay"></div>
 
 <div id="overlay">
-  <div class="title-main">RETRO</div>
-  <div class="title-sub">BLASTER</div>
-  <div class="title-hint">&#x1F4F1; Touch anywhere — your plane follows your finger</div>
-  <div class="title-hint">&#x2328;&#xFE0F; WASD / Arrow keys on desktop</div>
-  <div class="title-hint" style="margin-bottom:24px;">&#x2708;&#xFE0F; Auto-fire &middot; ESC = Pause</div>
-  <button class="btn-primary" onclick="startGame()">&#x25B6; START</button>
-  <button class="btn-secondary" onclick="openShop()">&#x1F6D2; SHOP</button>
-  <button class="btn-secondary" onclick="openLeaderboard()">&#x1F3C6; LEADERBOARD</button>
-  <div id="hs-display" style="margin-top:10px;">BEST: 0</div>
+  <canvas id="overlay-canvas"></canvas>
+  <div class="overlay-content">
+    <div class="title-wrap">
+      <span class="title-main">RETRO</span>
+    </div>
+    <div class="title-sub">B&nbsp;L&nbsp;A&nbsp;S&nbsp;T&nbsp;E&nbsp;R</div>
+    <div class="title-divider"></div>
+    <div class="title-hint">&#x1F4F1; Touch &mdash; your plane follows your finger</div>
+    <div class="title-hint" style="margin-bottom:22px;">&#x2708;&#xFE0F; Auto-fire &nbsp;&middot;&nbsp; WASD / Arrows &nbsp;&middot;&nbsp; ESC = Pause</div>
+    <button class="btn-primary" onclick="startGame()"><svg width="12" height="13" viewBox="0 0 12 13" fill="currentColor" style="margin-right:10px;vertical-align:-1px"><polygon points="0,0 12,6.5 0,13"/></svg>START GAME</button>
+    <button class="btn-secondary" onclick="openShop()"><svg width="14" height="13" viewBox="0 0 14 13" fill="none" stroke="currentColor" stroke-width="1.3" style="margin-right:8px;vertical-align:-1px"><rect x="1" y="4" width="12" height="8" rx="1"/><path d="M4 4V3a3 3 0 0 1 6 0v1"/><line x1="5" y1="8" x2="9" y2="8"/></svg>SHOP</button>
+    <button class="btn-secondary" onclick="openLeaderboard()"><svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.3" style="margin-right:8px;vertical-align:-1px"><rect x="4" y="1" width="5" height="5" rx="1"/><path d="M6.5 6v2M3 12h7M4 9h5a1 1 0 0 1 1 1v2H3v-2a1 1 0 0 1 1-1z"/></svg>LEADERBOARD</button>
+    <div id="hs-display">BEST: 0</div>
+  </div>
 </div>
 
 <div id="pause-overlay">
@@ -1018,6 +1033,49 @@ async function openLeaderboard(){
 function closeLeaderboard(){document.getElementById('lb-panel').style.display='none';}
 
 initBG();
+
+// OVERLAY STAR FIELD
+(function(){
+  const oc=document.getElementById('overlay-canvas');
+  if(!oc)return;
+  function sizeOC(){oc.width=oc.offsetWidth;oc.height=oc.offsetHeight;}
+  sizeOC();
+  const octx=oc.getContext('2d');
+  const LAYERS=[
+    {count:60,speed:0.12,size:0.8,alpha:0.35},
+    {count:35,speed:0.28,size:1.3,alpha:0.55},
+    {count:15,speed:0.55,size:1.9,alpha:0.8},
+  ];
+  const stars=[];
+  LAYERS.forEach(l=>{
+    for(let i=0;i<l.count;i++){
+      stars.push({x:Math.random()*oc.width,y:Math.random()*oc.height,speed:l.speed,size:l.size,alpha:l.alpha*(0.6+Math.random()*0.4)});
+    }
+  });
+  let active=true;
+  function drawOC(){
+    if(!active)return;
+    octx.clearRect(0,0,oc.width,oc.height);
+    stars.forEach(s=>{
+      s.y+=s.speed;
+      if(s.y>oc.height){s.y=0;s.x=Math.random()*oc.width;}
+      octx.beginPath();
+      octx.arc(s.x,s.y,s.size,0,Math.PI*2);
+      octx.fillStyle='rgba(180,220,255,'+s.alpha+')';
+      octx.fill();
+    });
+    requestAnimationFrame(drawOC);
+  }
+  drawOC();
+  // stop when overlay hides to save GPU
+  const obs=new MutationObserver(()=>{
+    const hidden=oc.closest('#overlay').style.display==='none';
+    active=!hidden;
+    if(!hidden)drawOC();
+  });
+  obs.observe(oc.closest('#overlay'),{attributes:true,attributeFilter:['style']});
+  window.addEventListener('resize',sizeOC);
+})();
 </script>
 </body>
 </html>
