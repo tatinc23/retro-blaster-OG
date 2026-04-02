@@ -35,6 +35,9 @@ class ViewController: UIViewController {
         view.addSubview(wv)
         self.webView = wv
 
+        // Register webView with StoreKit so it can call grantGems() on purchase
+        StoreKitHandler.shared.setWebView(wv)
+
         loadGame()
     }
 
