@@ -32,11 +32,11 @@ html,body{width:100%;height:100%;min-height:-webkit-fill-available;overflow:hidd
 #wave-banner.slide-out{transition:transform 0.35s ease-in;transform:translateX(-110%);}
 #powerup-msg{position:absolute;top:42%;left:50%;transform:translate(-50%,-50%);color:#ff0;font-family:'Courier New',monospace;font-size:16px;font-weight:bold;pointer-events:none;opacity:0;transition:opacity 0.3s;text-shadow:0 0 12px #f80;letter-spacing:2px;white-space:nowrap;}
 #shop-btn{position:absolute;bottom:14px;right:14px;background:rgba(10,20,50,0.85);color:#6af;border:1px solid rgba(40,100,200,0.5);padding:8px 16px;font-size:11px;border-radius:20px;cursor:pointer;font-family:'Courier New',monospace;backdrop-filter:blur(6px);letter-spacing:1px;z-index:5;}
-#overlay{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 28px;background:linear-gradient(180deg,#000810 0%,#010d20 50%,#000810 100%);z-index:10;overflow:hidden;}
+#overlay{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:0 28px;background:linear-gradient(180deg,#000810 0%,#010d20 50%,#000810 100%);z-index:10;overflow:hidden;}
 #overlay::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,200,255,0.018) 2px,rgba(0,200,255,0.018) 4px);pointer-events:none;z-index:1;}
 #overlay::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(0,80,180,0.18) 0%,transparent 70%);pointer-events:none;z-index:1;}
-#overlay-canvas{position:absolute;inset:0;z-index:0;opacity:0.7;}
-.overlay-content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;width:100%;gap:0;}
+#overlay-canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;opacity:0.7;}
+.overlay-content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;width:100%;padding:12vh 0 8vh;}
 .title-wrap{position:relative;margin-bottom:6px;}
 .title-main{font-family:'Courier New',monospace;color:#e8f4ff;font-size:clamp(3.5rem,14vw,5rem);letter-spacing:10px;line-height:1;text-shadow:0 0 30px rgba(80,180,255,0.9),0 0 60px rgba(40,120,255,0.5),0 0 100px rgba(0,80,200,0.3);animation:titlePulse 2.5s ease-in-out infinite;display:block;}
 .title-main::before{content:'RETRO';position:absolute;left:2px;top:1px;color:rgba(255,60,120,0.35);letter-spacing:10px;pointer-events:none;}
@@ -110,6 +110,8 @@ html,body{width:100%;height:100%;min-height:-webkit-fill-available;overflow:hidd
   <div id="wave-banner"><div id="wave-banner-inner">WAVE 1</div></div>
   <div id="powerup-msg"></div>
   <button id="shop-btn" onclick="openShop()">SHOP</button>
+  <!-- NEO-NEON-2026: shield activation button, bottom-right, only visible when shield power-up held -->
+  <button id="shield-btn" onclick="activateShield()" style="position:absolute;bottom:14px;right:90px;background:rgba(0,40,80,0.85);color:#30c8ff;border:1.5px solid rgba(0,200,255,0.6);padding:8px 14px;font-size:11px;border-radius:20px;cursor:pointer;font-family:'Courier New',monospace;backdrop-filter:blur(6px);letter-spacing:1px;z-index:5;display:none;box-shadow:0 0 12px rgba(0,200,255,0.3);">&#x25CE; SHIELD</button>
   <div id="flash-overlay"></div>
 
 <div id="overlay">
@@ -120,11 +122,10 @@ html,body{width:100%;height:100%;min-height:-webkit-fill-available;overflow:hidd
     </div>
     <div class="title-sub">B&nbsp;L&nbsp;A&nbsp;S&nbsp;T&nbsp;E&nbsp;R</div>
     <div class="title-divider"></div>
-    <div class="title-hint">&#x1F4F1; Touch &mdash; your plane follows your finger</div>
-    <div class="title-hint" style="margin-bottom:22px;">&#x2708;&#xFE0F; Auto-fire &nbsp;&middot;&nbsp; WASD / Arrows &nbsp;&middot;&nbsp; ESC = Pause</div>
+    <div class="title-hint" style="margin-bottom:22px;">Touch anywhere &mdash; auto-fire &mdash; tap to pause</div>
     <button class="btn-primary" onclick="startGame()"><svg width="12" height="13" viewBox="0 0 12 13" fill="currentColor" style="margin-right:10px;vertical-align:-1px"><polygon points="0,0 12,6.5 0,13"/></svg>START GAME</button>
     <button class="btn-secondary" onclick="openShop()"><svg width="14" height="13" viewBox="0 0 14 13" fill="none" stroke="currentColor" stroke-width="1.3" style="margin-right:8px;vertical-align:-1px"><rect x="1" y="4" width="12" height="8" rx="1"/><path d="M4 4V3a3 3 0 0 1 6 0v1"/><line x1="5" y1="8" x2="9" y2="8"/></svg>SHOP</button>
-    <button class="btn-secondary" onclick="openLeaderboard()"><svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.3" style="margin-right:8px;vertical-align:-1px"><rect x="4" y="1" width="5" height="5" rx="1"/><path d="M6.5 6v2M3 12h7M4 9h5a1 1 0 0 1 1 1v2H3v-2a1 1 0 0 1 1-1z"/></svg>LEADERBOARD</button>
+    <button class="btn-secondary" onclick="openLeaderboard()"><svg width="14" height="13" viewBox="0 0 14 13" fill="none" stroke="currentColor" stroke-width="1.3" style="margin-right:8px;vertical-align:-1px"><rect x="1" y="4" width="4" height="9"/><rect x="5" y="1" width="4" height="12"/><rect x="9" y="6" width="4" height="7"/></svg>LEADERBOARD</button>
     <div id="hs-display">BEST: 0</div>
   </div>
 </div>
@@ -150,6 +151,11 @@ html,body{width:100%;height:100%;min-height:-webkit-fill-available;overflow:hidd
   <div class="sitem"><span class="sn">50 Gems</span><span style="color:#fa0;font-family:'Courier New',monospace;font-size:12px;">$4.99</span><button class="sbuy" onclick="stripeCheckout('price_small',50)">Buy</button></div>
   <div class="sitem"><span class="sn">120 Gems</span><span style="color:#fa0;font-family:'Courier New',monospace;font-size:12px;">$9.99</span><button class="sbuy" onclick="stripeCheckout('price_medium',120)">Buy</button></div>
   <div class="sitem"><span class="sn">300 Gems</span><span style="color:#fa0;font-family:'Courier New',monospace;font-size:12px;">$19.99</span><button class="sbuy" onclick="stripeCheckout('price_large',300)">Buy</button></div>
+  <!-- NEO-NEON-2026: rewarded ad — double coins this wave -->
+  <div class="sitem" style="border-color:rgba(255,200,0,0.4);background:rgba(40,30,0,0.5);">
+    <span class="sn" style="color:#ffd000;">2x Coins This Wave</span>
+    <button class="sbuy" style="background:linear-gradient(135deg,#806000,#c09000);" onclick="watchAdDoubleCoins()">Watch Ad</button>
+  </div>
   <div id="shop-status" style="color:#4f8;font-family:'Courier New',monospace;font-size:12px;text-align:center;margin:10px 0;min-height:18px;"></div>
   <button class="btn-secondary" onclick="closeShop()">&#x2190; Back</button>
 </div>
@@ -167,7 +173,7 @@ html,body{width:100%;height:100%;min-height:-webkit-fill-available;overflow:hidd
 </div>
 
 <div id="lb-panel">
-  <div style="font-family:'Courier New',monospace;color:#fa0;font-size:1.3rem;margin-bottom:4px;letter-spacing:3px;text-shadow:0 0 12px #fa0;">&#x1F3C6; LEADERBOARD</div>
+  <div style="font-family:'Courier New',monospace;color:#fa0;font-size:1.3rem;margin-bottom:4px;letter-spacing:3px;text-shadow:0 0 12px #fa0;">LEADERBOARD</div>
   <div style="font-family:'Courier New',monospace;color:#556;font-size:10px;margin-bottom:16px;letter-spacing:1px;">GLOBAL TOP 25</div>
   <div id="lb-rows" style="width:100%;"></div>
   <button class="btn-secondary" style="margin-top:16px;" onclick="closeLeaderboard()">&#x2190; Back</button>
@@ -181,6 +187,80 @@ let W,H;
 function resize(){W=cv.width=wrap.clientWidth;H=cv.height=wrap.clientHeight;}
 resize();window.addEventListener('resize',resize);
 
+// NEO-NEON-2026: Web Audio — synthesized SFX + ambient drone (no files)
+let _ac=null,_droneNodes=null,_audioReady=false;
+function getAC(){
+  if(!_ac){try{_ac=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}
+  return _ac;
+}
+function initAudio(){
+  if(_audioReady)return;_audioReady=true;
+  const ac=getAC();if(!ac)return;
+  if(ac.state==='suspended')ac.resume();
+  // subtle ambient drone: two detuned oscillators through a low-pass filter
+  const o1=ac.createOscillator(),o2=ac.createOscillator();
+  const gain=ac.createGain(),filt=ac.createBiquadFilter();
+  o1.type='sawtooth';o1.frequency.value=55;
+  o2.type='sawtooth';o2.frequency.value=55.6;
+  filt.type='lowpass';filt.frequency.value=280;filt.Q.value=2;
+  gain.gain.value=0.04;
+  o1.connect(filt);o2.connect(filt);filt.connect(gain);gain.connect(ac.destination);
+  o1.start();o2.start();
+  // slow LFO on filter cutoff for movement
+  const lfo=ac.createOscillator(),lfoGain=ac.createGain();
+  lfo.frequency.value=0.18;lfoGain.gain.value=120;
+  lfo.connect(lfoGain);lfoGain.connect(filt.frequency);lfo.start();
+  _droneNodes={o1,o2,gain,lfo};
+}
+function stopDrone(){
+  if(_droneNodes){try{_droneNodes.gain.gain.setTargetAtTime(0,getAC().currentTime,0.5);}catch(e){}}
+}
+function playSFX(type){
+  const ac=getAC();if(!ac||!_audioReady)return;
+  try{
+    if(type==='shoot'){
+      const o=ac.createOscillator(),g=ac.createGain();
+      o.type='square';o.frequency.setValueAtTime(900,ac.currentTime);
+      o.frequency.exponentialRampToValueAtTime(400,ac.currentTime+0.07);
+      g.gain.setValueAtTime(0.07,ac.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+0.08);
+      o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+0.09);
+    }else if(type==='explode'){
+      const buf=ac.createBuffer(1,ac.sampleRate*0.35,ac.sampleRate);
+      const d=buf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*(1-i/d.length);
+      const src=ac.createBufferSource(),g=ac.createGain(),filt=ac.createBiquadFilter();
+      filt.type='bandpass';filt.frequency.value=180;filt.Q.value=0.8;
+      g.gain.setValueAtTime(0.4,ac.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+0.35);
+      src.buffer=buf;src.connect(filt);filt.connect(g);g.connect(ac.destination);src.start();
+    }else if(type==='powerup'){
+      const freqs=[400,500,650,800];
+      freqs.forEach((f,i)=>{
+        const o=ac.createOscillator(),g=ac.createGain();
+        o.type='sine';o.frequency.value=f;
+        g.gain.setValueAtTime(0,ac.currentTime+i*0.06);
+        g.gain.linearRampToValueAtTime(0.12,ac.currentTime+i*0.06+0.03);
+        g.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+i*0.06+0.14);
+        o.connect(g);g.connect(ac.destination);o.start(ac.currentTime+i*0.06);o.stop(ac.currentTime+i*0.06+0.15);
+      });
+    }else if(type==='boss'){
+      const o=ac.createOscillator(),g=ac.createGain();
+      o.type='sawtooth';o.frequency.setValueAtTime(60,ac.currentTime);
+      o.frequency.linearRampToValueAtTime(40,ac.currentTime+0.6);
+      g.gain.setValueAtTime(0.3,ac.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+0.7);
+      o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+0.7);
+    }else if(type==='hit'){
+      const o=ac.createOscillator(),g=ac.createGain();
+      o.type='square';o.frequency.setValueAtTime(200,ac.currentTime);
+      o.frequency.exponentialRampToValueAtTime(80,ac.currentTime+0.15);
+      g.gain.setValueAtTime(0.18,ac.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+0.18);
+      o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+0.2);
+    }
+  }catch(e){}
+}
+
 // PERSISTENCE
 const LEADERBOARD_URL='https://retro-blaster-leaderboard.chris-d6a.workers.dev';
 let sd={highScore:0,gems:0,unlocked:['default'],selected:'default',upgrades:[],playerName:''};
@@ -193,7 +273,7 @@ let gs='title',score=0,lives=3,wave=1,paused=false;
 let shakeAmt=0,shakeTime=0;
 let bossAlive=false,bossTimer=30;
 let waveSpawned=0,waveNeeded=6,spawnTimer=0,spawnInterval=1.8;
-let stars=[],clouds=[],trees=[];
+let stars=[],clouds=[],trees=[],nebula=[],debrisObjs=[];
 let player=null,bullets=[],enemies=[],powerups=[],particles=[],floatingTexts=[],boss=null;
 let comboCount=0,comboTimer=0;
 const COMBO_WINDOW=3.0;
@@ -201,6 +281,10 @@ let gameTime=0;
 let phase2Flashed=false;
 let bossEntryTrail=[];
 let shockwaves=[];
+// NEO-NEON-2026: Void Pulse state
+let voidPulseActive=false,voidPulseTimer=0,voidPulseRipples=[];
+// NEO-NEON-2026: Neon Cascade state
+let neonCascadeActive=false,neonCascadeTimer=0;
 
 // HEARTS HUD
 function renderHeartsHUD(){
@@ -232,6 +316,7 @@ function renderHeartsHUD(){
 let touchX=null,touchY=null,touchActive=false;
 cv.addEventListener('touchstart',e=>{
   e.preventDefault();
+  initAudio(); // NEO-NEON-2026: init Web Audio on first user gesture (iOS requirement)
   const r=cv.getBoundingClientRect();const t=e.touches[0];
   touchX=(t.clientX-r.left)*(W/r.width);touchY=(t.clientY-r.top)*(H/r.height);touchActive=true;
 },{passive:false});
@@ -276,8 +361,8 @@ function quitToMenu(){
   hints.forEach((h,i)=>{const d=el('div','title-hint',h);if(i===2)d.style.marginBottom='24px';ov.appendChild(d);});
   function btn(cls,txt,fn){const b=el('button',cls,txt);b.onclick=fn;return b;}
   ov.appendChild(btn('btn-primary','\u25B6 START',startGame));
-  ov.appendChild(btn('btn-secondary','\u{1F6D2} SHOP',openShop));
-  ov.appendChild(btn('btn-secondary','\u{1F3C6} LEADERBOARD',openLeaderboard));
+  ov.appendChild(btn('btn-secondary','SHOP',openShop));
+  ov.appendChild(btn('btn-secondary','LEADERBOARD',openLeaderboard));
   const hs=el('div','','BEST: '+sd.highScore,{marginTop:'10px',fontFamily:"'Courier New',monospace",color:'#fa0',fontSize:'13px'});
   hs.id='hs-display';
   ov.appendChild(hs);
@@ -323,6 +408,21 @@ function gameOver(){
   ov.appendChild(el('div',{fontFamily:"'Courier New',monospace",color:'#f88',fontSize:'1.3rem',marginBottom:'4px',letterSpacing:'2px'},'SCORE: '+score));
   ov.appendChild(el('div',{fontFamily:"'Courier New',monospace",color:'#fa0',fontSize:'1rem',marginBottom:'24px'},'BEST: '+sd.highScore));
   ov.appendChild(btn('btn-primary','\u21BA PLAY AGAIN',startGame));
+  // NEO-NEON-2026: rewarded ad — revive offer at game over
+  const reviveBtn=document.createElement('button');
+  reviveBtn.className='btn-secondary';
+  reviveBtn.textContent='\u25B6 Watch Ad \u2014 Revive +1 Life';
+  reviveBtn.style.cssText='border-color:rgba(255,200,0,0.5);color:#ffd000;';
+  reviveBtn.onclick=function(){
+    window.showRewardedAd('revive',function(){
+      lives=1;gs='playing';
+      ov.style.display='none';
+      if(!player)player=mkPlayer();
+      renderHeartsHUD();
+      player.shield=true;player.shieldTimer=5;
+    });
+  };
+  ov.appendChild(reviveBtn);
   ov.appendChild(btn('btn-secondary','\u{1F3C6} Leaderboard',openLeaderboard));
   ov.appendChild(btn('btn-secondary','\u2302 Menu',quitToMenu));
 }
@@ -343,7 +443,9 @@ function mkPlayer(){
 function updatePlayer(dt){
   const p=player;
   if(touchActive&&touchX!=null){
-    const dx=touchX-p.x,dy=touchY-p.y;
+    // NEO-NEON-2026: 30px upward offset so ship leads finger, never hidden by thumb
+    const tx=touchX,ty=touchY-30;
+    const dx=tx-p.x,dy=ty-p.y;
     const d=Math.sqrt(dx*dx+dy*dy);
     const spd=Math.min(d/dt,p.speed*2.5);
     if(d>2){p.x+=dx/d*spd*dt;p.y+=dy/d*spd*dt;}
@@ -363,7 +465,13 @@ function updatePlayer(dt){
     p.fireTimer=p.fireRate;
     mkBullet(p.x,p.y-22,0,-700,false,p.dmg);
     if(p.side){mkBullet(p.x-32,p.y,0,-630,false,1);mkBullet(p.x+32,p.y,0,-630,false,1);}
+    // NEO-NEON-2026: Neon Cascade — fire 2 angled shots + glow trail flag
+    if(neonCascadeActive){
+      mkBullet(p.x,p.y-22,-180,-680,false,p.dmg,true);
+      mkBullet(p.x,p.y-22,180,-680,false,p.dmg,true);
+    }
     p.muzzleFlash=0.08;
+    playSFX('shoot');
   }
   if(p.muzzleFlash>0)p.muzzleFlash-=dt;
   if(p.invTimer>0){p.invTimer-=dt;p.visible=Math.floor(p.invTimer*10)%2===0;}else p.visible=true;
@@ -375,32 +483,52 @@ function updatePlayer(dt){
 }
 function hitPlayer(){
   if(!player)return;
-  if(player.shield){player.shield=false;player.shieldTimer=0;shake(3,0.2);return;}
+  if(player.shield){player.shield=false;player.shieldTimer=0;shake(3,0.2);playSFX('hit');return;}
   if(player.invTimer>0)return;
-  lives--;player.invTimer=2.2;shake(7,0.45);
+  lives--;player.invTimer=2.2;shake(7,0.45);playSFX('hit');
   renderHeartsHUD();
   if(lives<=0){player=null;setTimeout(gameOver,900);}
 }
 
 // BULLETS
-function mkBullet(x,y,vx,vy,isEnemy,dmg){
+function mkBullet(x,y,vx,vy,isEnemy,dmg,isCascade){
   dmg=dmg||1;
   const ang=Math.atan2(vy,vx);
-  bullets.push({x,y,vx,vy,isEnemy,dmg,ang,isBoss:false,isPhase2:false});
+  bullets.push({x,y,vx,vy,isEnemy,dmg,ang,isBoss:false,isPhase2:false,isCascade:!!isCascade});
 }
 function updateBullets(dt){
   for(let i=bullets.length-1;i>=0;i--){
-    const b=bullets[i];b.x+=b.vx*dt;b.y+=b.vy*dt;
+    const b=bullets[i];
+    // NEO-NEON-2026: Void Pulse slows enemy bullets only
+    const spd=(b.isEnemy&&voidPulseActive)?dt*0.28:dt;
+    b.x+=b.vx*spd;b.y+=b.vy*spd;
     if(b.y<-20||b.y>H+20||b.x<-20||b.x>W+20)bullets.splice(i,1);
   }
 }
+
+// NEO-NEON-2026: Wave formation data table
+// Each formation defines spawn positions relative to screen width
+const WAVE_FORMATIONS=[
+  {id:'straight',  spawnFn:(i,n)=>({x:30+Math.random()*(W-60),  offsetDelay:0})},
+  {id:'flanking',  spawnFn:(i,n)=>({x:i%2===0?W*0.15:W*0.85,    offsetDelay:i*0.18})},
+  {id:'vshape',    spawnFn:(i,n)=>({x:W/2+(i-n/2)*52,            offsetDelay:Math.abs(i-n/2)*0.12})},
+  {id:'spread',    spawnFn:(i,n)=>({x:W*0.1+i*(W*0.8/(n-1||1)), offsetDelay:0})},
+];
+function getFormation(w){
+  // cycle through formations as waves progress, unlock harder ones later
+  const avail=w<3?1:w<6?2:w<9?3:4;
+  return WAVE_FORMATIONS[Math.floor(Math.random()*avail)];
+}
+let currentFormation=WAVE_FORMATIONS[0],formationEnemyIndex=0;
 
 // ENEMIES
 function enemyTier(w){return w<=3?0:w<=6?1:2;}
 function mkEnemy(){
   const tier=enemyTier(wave);
   const hp=1+Math.floor(wave/3)+(tier>0?tier:0);
-  return{x:30+Math.random()*(W-60),y:-40,
+  const form=currentFormation.spawnFn(formationEnemyIndex,waveNeeded);
+  formationEnemyIndex++;
+  return{x:Math.max(30,Math.min(W-30,form.x)),y:-40-(form.offsetDelay*80),
     speed:90+wave*12,hp:hp,maxHp:hp,tier:tier,
     shootInterval:Math.max(0.65,2.4-wave*0.1),
     shootTimer:0.5+Math.random()*1.5,
@@ -468,13 +596,35 @@ function triggerFlash(col,dur){
   setTimeout(function(){el.style.transition='opacity '+dur+'s';el.style.opacity='0';},50);
 }
 
-// POWERUPS
-function mkPowerup(x,y){powerups.push({x:x,y:y,type:Math.floor(Math.random()*3),t:0});}
+// NEO-NEON-2026: Power-up data table — all types defined here
+const POWERUP_TYPES=[
+  {id:'side',    label:'SIDE FIGHTERS!', color:'#ffd020', trailColor:'rgba(255,200,0,0.5)',   shape:'star',   size:14},
+  {id:'dmg',     label:'POWER UP!',      color:'#ff6010', trailColor:'rgba(255,80,0,0.5)',    shape:'arrow',  size:14},
+  {id:'shield',  label:'SHIELD!',        color:'#30c8ff', trailColor:'rgba(0,200,255,0.5)',   shape:'ring',   size:14},
+  {id:'cascade', label:'NEON CASCADE!',  color:'#c040ff', trailColor:'rgba(180,0,255,0.5)',   shape:'burst',  size:16},
+  {id:'void',    label:'VOID PULSE!',    color:'#00ffcc', trailColor:'rgba(0,255,180,0.4)',   shape:'wave',   size:16},
+];
+function mkPowerup(x,y){
+  // NEO-NEON-2026: cascade/void are rare (10% each), standard 3 split remaining 80%
+  const r=Math.random();
+  let type;
+  if(r<0.1)type=3;
+  else if(r<0.2)type=4;
+  else type=Math.floor(Math.random()*3);
+  powerups.push({x:x,y:y,type:type,t:0,trail:[]});
+}
 function updatePowerups(dt){
   for(let i=powerups.length-1;i>=0;i--){
-    powerups[i].y+=100*dt;powerups[i].t+=dt;
-    if(powerups[i].y>H+30)powerups.splice(i,1);
+    const pu=powerups[i];
+    pu.trail.push({x:pu.x,y:pu.y,life:1});
+    if(pu.trail.length>10)pu.trail.shift();
+    pu.trail.forEach(t=>{t.life-=dt*4;});
+    pu.y+=100*dt;pu.t+=dt;
+    if(pu.y>H+30)powerups.splice(i,1);
   }
+  // NEO-NEON-2026: update active power-up timers
+  if(voidPulseActive){voidPulseTimer-=dt;if(voidPulseTimer<=0){voidPulseActive=false;}}
+  if(neonCascadeActive){neonCascadeTimer-=dt;if(neonCascadeTimer<=0){neonCascadeActive=false;}}
 }
 
 // PARTICLES
@@ -516,33 +666,77 @@ function updateFloatingTexts(dt){
 
 // BACKGROUND
 function initBG(){
+  // NEO-NEON-2026: layer 1 — deep stars (slow)
   stars=[];
-  for(let i=0;i<90;i++){
+  for(let i=0;i<110;i++){
     const sz=Math.random();
     stars.push({x:Math.random()*W,y:Math.random()*H,
-      size:sz*2.4+0.4,sp:20+Math.random()*80,
-      glow:Math.random()<0.25,
+      size:sz*2.4+0.4,sp:18+Math.random()*60,
+      glow:Math.random()<0.3,
       twinklePhase:Math.random()*Math.PI*2,
-      twinkleSpeed:1+Math.random()*2});
+      twinkleSpeed:1+Math.random()*2,layer:0});
   }
-  clouds=[];
-  for(let i=0;i<8;i++){
-    clouds.push({x:Math.random()*W,y:Math.random()*H*0.6,
-      w:60+Math.random()*120,h:20+Math.random()*30,
-      sp:12+Math.random()*20,alpha:0.04+Math.random()*0.06});
+  // NEO-NEON-2026: layer 2 — nebula clouds (mid, velocity-reactive)
+  nebula=[];
+  for(let i=0;i<10;i++){
+    nebula.push({x:Math.random()*W,y:Math.random()*H,
+      w:80+Math.random()*160,h:30+Math.random()*50,
+      sp:28+Math.random()*30,
+      hue:Math.random()<0.5?200+Math.random()*60:280+Math.random()*40,
+      alpha:0.028+Math.random()*0.038});
   }
-  trees=[];
+  // NEO-NEON-2026: layer 3 — near debris (fast, shootable bonus objects)
+  debrisObjs=[];
+  clouds=[];trees=[];
 }
+function spawnDebris(){
+  // NEO-NEON-2026: occasional shootable debris drops in from top
+  if(Math.random()<0.004){
+    debrisObjs.push({x:20+Math.random()*(W-40),y:-20,
+      sp:60+Math.random()*80,rot:Math.random()*Math.PI*2,
+      rotSpeed:(Math.random()-0.5)*3,size:5+Math.random()*8,
+      hp:1,pts:50+Math.floor(Math.random()*150),hit:false});
+  }
+}
+// NEO-NEON-2026: velocity multiplier — scales BG speed with wave intensity
+function bgVelMult(){return 1+(wave-1)*0.08;}
 function updateBG(dt){
   gameTime+=dt;
-  for(let i=0;i<stars.length;i++){stars[i].y+=stars[i].sp*dt;if(stars[i].y>H)stars[i].y=-6;}
-  for(let i=0;i<clouds.length;i++){clouds[i].x-=clouds[i].sp*dt;if(clouds[i].x<-clouds[i].w)clouds[i].x=W+clouds[i].w;}
-
+  const vm=bgVelMult();
+  // layer 1 stars
+  for(let i=0;i<stars.length;i++){stars[i].y+=stars[i].sp*vm*dt;if(stars[i].y>H)stars[i].y=-6;}
+  // layer 2 nebula (mid speed, drift sideways slightly)
+  for(let i=0;i<nebula.length;i++){
+    nebula[i].y+=nebula[i].sp*vm*dt;
+    nebula[i].x+=Math.sin(gameTime*0.3+i)*0.4*dt;
+    if(nebula[i].y>H+nebula[i].h){nebula[i].y=-(nebula[i].h);nebula[i].x=Math.random()*W;}
+  }
+  // layer 3 debris (fast, spawns randomly)
+  spawnDebris();
+  for(let i=debrisObjs.length-1;i>=0;i--){
+    const d=debrisObjs[i];
+    d.y+=d.sp*vm*2.2*dt;d.rot+=d.rotSpeed*dt;
+    if(d.y>H+30)debrisObjs.splice(i,1);
+  }
+  // void pulse ripple decay
+  for(let i=voidPulseRipples.length-1;i>=0;i--){
+    voidPulseRipples[i].r+=200*dt;voidPulseRipples[i].life-=dt*1.5;
+    if(voidPulseRipples[i].life<=0)voidPulseRipples.splice(i,1);
+  }
 }
 function drawBG(){
   const grad=ctx.createLinearGradient(0,0,0,H);
   grad.addColorStop(0,'#010610');grad.addColorStop(0.5,'#020a18');grad.addColorStop(1,'#051420');
   ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);
+  // layer 2: nebula clouds (behind stars for depth)
+  for(let i=0;i<nebula.length;i++){
+    const c=nebula[i];
+    ctx.fillStyle='hsla('+c.hue+',60%,40%,'+c.alpha+')';
+    ctx.beginPath();ctx.ellipse(c.x,c.y,c.w,c.h,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='hsla('+c.hue+',60%,50%,'+(c.alpha*0.6)+')';
+    ctx.beginPath();ctx.ellipse(c.x-c.w*0.28,c.y-c.h*0.1,c.w*0.55,c.h*0.65,0,0,Math.PI*2);ctx.fill();
+  }
+  // layer 1: stars
   for(let i=0;i<stars.length;i++){
     const s=stars[i];
     const tw=Math.sin(gameTime*s.twinkleSpeed+s.twinklePhase)*0.5+0.5;
@@ -552,14 +746,25 @@ function drawBG(){
     ctx.beginPath();ctx.arc(s.x,s.y,s.size*0.7,0,Math.PI*2);ctx.fill();
     ctx.shadowBlur=0;
   }
-  for(let i=0;i<clouds.length;i++){
-    const c=clouds[i];
-    ctx.fillStyle='rgba(180,210,255,'+c.alpha+')';
-    ctx.beginPath();ctx.ellipse(c.x,c.y,c.w,c.h,0,0,Math.PI*2);ctx.fill();
-    ctx.beginPath();ctx.ellipse(c.x-c.w*0.3,c.y,c.w*0.6,c.h*0.7,0,0,Math.PI*2);ctx.fill();
-    ctx.beginPath();ctx.ellipse(c.x+c.w*0.3,c.y,c.w*0.6,c.h*0.7,0,0,Math.PI*2);ctx.fill();
+  // layer 3: near debris (fast-moving asteroids, neon outline)
+  for(let i=0;i<debrisObjs.length;i++){
+    const d=debrisObjs[i];
+    ctx.save();ctx.translate(d.x,d.y);ctx.rotate(d.rot);
+    ctx.strokeStyle=d.hit?'rgba(255,180,0,0.9)':'rgba(120,140,180,0.55)';
+    ctx.lineWidth=1.5;ctx.shadowBlur=d.hit?12:0;ctx.shadowColor='rgba(255,180,0,0.9)';
+    ctx.beginPath();
+    // irregular polygon
+    for(let k=0;k<6;k++){const a=k/6*Math.PI*2,r=d.size*(0.7+Math.sin(k*1.7)*0.3);ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r);}
+    ctx.closePath();ctx.stroke();
+    ctx.shadowBlur=0;ctx.restore();
   }
-
+  // void pulse glassmorphic ripples
+  for(let i=0;i<voidPulseRipples.length;i++){
+    const rp=voidPulseRipples[i];ctx.globalAlpha=rp.life*0.5;
+    ctx.strokeStyle='rgba(80,200,255,0.8)';ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(rp.x,rp.y,rp.r,0,Math.PI*2);ctx.stroke();
+  }
+  ctx.globalAlpha=1;
   const vg=ctx.createRadialGradient(W/2,H/2,H*0.3,W/2,H/2,H*0.85);
   vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,0,0,0.55)');
   ctx.fillStyle=vg;ctx.fillRect(0,0,W,H);
@@ -739,7 +944,14 @@ function drawBullets(){
   for(let i=0;i<bullets.length;i++){
     const b=bullets[i];
     ctx.save();ctx.translate(b.x,b.y);ctx.rotate(b.ang);
-    if(!b.isEnemy){
+    if(!b.isEnemy&&b.isCascade){
+      // NEO-NEON-2026: Neon Cascade bullets — purple glow trail
+      ctx.shadowColor='rgba(200,0,255,0.9)';ctx.shadowBlur=14;
+      ctx.fillStyle='rgba(200,80,255,0.95)';
+      ctx.beginPath();ctx.ellipse(0,0,3.5,10,0,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='rgba(255,180,255,0.7)';
+      ctx.beginPath();ctx.arc(0,-7,2.5,0,Math.PI*2);ctx.fill();
+    }else if(!b.isEnemy){
       ctx.shadowColor='rgba(0,220,255,0.9)';ctx.shadowBlur=10;
       ctx.fillStyle='rgba(0,220,255,0.9)';
       ctx.beginPath();ctx.ellipse(0,0,3.5,9,0,0,Math.PI*2);ctx.fill();
@@ -762,19 +974,66 @@ function drawBullets(){
   }
 }
 
-// POWERUPS DRAW
+// NEO-NEON-2026: draw power-up with unique shape per type + glow trail
 function drawPowerups(){
-  const cols=['#ffd020','#ff6010','#30c8ff'],icons=['*','+','O'];
   for(let i=0;i<powerups.length;i++){
-    const pu=powerups[i];const pulse=13+Math.sin(pu.t*5)*3;
-    ctx.shadowColor=cols[pu.type];ctx.shadowBlur=16;
-    ctx.fillStyle=cols[pu.type]+'88';
-    ctx.beginPath();ctx.arc(pu.x,pu.y,pulse+4,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle=cols[pu.type];
+    const pu=powerups[i];
+    const def=POWERUP_TYPES[pu.type];
+    const pulse=def.size+Math.sin(pu.t*5)*3;
+    // draw trail
+    for(let k=0;k<pu.trail.length;k++){
+      const tr=pu.trail[k];if(tr.life<=0)continue;
+      ctx.globalAlpha=tr.life*0.3;
+      ctx.fillStyle=def.trailColor;
+      ctx.beginPath();ctx.arc(tr.x,tr.y,pulse*0.5,0,Math.PI*2);ctx.fill();
+    }
+    ctx.globalAlpha=1;
+    ctx.shadowColor=def.color;ctx.shadowBlur=18;
+    // outer glow ring
+    ctx.fillStyle=def.color+'44';
+    ctx.beginPath();ctx.arc(pu.x,pu.y,pulse+5,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle=def.color+'99';
     ctx.beginPath();ctx.arc(pu.x,pu.y,pulse,0,Math.PI*2);ctx.fill();
     ctx.shadowBlur=0;
-    ctx.fillStyle='#000';ctx.font='bold 14px monospace';
-    ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(icons[pu.type],pu.x,pu.y);
+    // unique inner shape
+    ctx.save();ctx.translate(pu.x,pu.y);ctx.rotate(pu.t*1.2);
+    ctx.fillStyle='#fff';ctx.strokeStyle=def.color;ctx.lineWidth=1.5;
+    if(def.shape==='star'){
+      // 6-point star for side fighters
+      for(let k=0;k<6;k++){
+        const a=k/6*Math.PI*2-Math.PI/2;const r=pulse*0.55,ri=pulse*0.25;
+        k===0?ctx.moveTo(Math.cos(a)*r,Math.sin(a)*r):ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r);
+        const a2=a+Math.PI/6;ctx.lineTo(Math.cos(a2)*ri,Math.sin(a2)*ri);
+      }
+      ctx.closePath();ctx.fillStyle=def.color+'cc';ctx.fill();
+    }else if(def.shape==='arrow'){
+      // upward arrow for damage
+      ctx.fillStyle=def.color+'cc';
+      ctx.beginPath();ctx.moveTo(0,-pulse*0.55);ctx.lineTo(pulse*0.35,0);ctx.lineTo(pulse*0.18,0);
+      ctx.lineTo(pulse*0.18,pulse*0.4);ctx.lineTo(-pulse*0.18,pulse*0.4);
+      ctx.lineTo(-pulse*0.18,0);ctx.lineTo(-pulse*0.35,0);ctx.closePath();ctx.fill();
+    }else if(def.shape==='ring'){
+      // rotating ring segments for shield
+      ctx.strokeStyle=def.color;ctx.lineWidth=2.5;ctx.shadowColor=def.color;ctx.shadowBlur=8;
+      ctx.beginPath();ctx.arc(0,0,pulse*0.5,0,Math.PI*1.3);ctx.stroke();
+      ctx.beginPath();ctx.arc(0,0,pulse*0.5,Math.PI*1.5,Math.PI*2.8);ctx.stroke();
+    }else if(def.shape==='burst'){
+      // spiky burst for Neon Cascade
+      ctx.fillStyle=def.color+'cc';
+      for(let k=0;k<8;k++){
+        const a=k/8*Math.PI*2;const r=pulse*0.6,ri=pulse*0.2;
+        k===0?ctx.moveTo(Math.cos(a)*r,Math.sin(a)*r):ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r);
+        const a2=a+Math.PI/8;ctx.lineTo(Math.cos(a2)*ri,Math.sin(a2)*ri);
+      }
+      ctx.closePath();ctx.fill();
+    }else if(def.shape==='wave'){
+      // glassmorphic wave rings for Void Pulse
+      ctx.strokeStyle=def.color;ctx.lineWidth=2;ctx.shadowColor=def.color;ctx.shadowBlur=10;
+      ctx.beginPath();ctx.arc(0,0,pulse*0.55,0,Math.PI*2);ctx.stroke();
+      ctx.globalAlpha=0.4;ctx.beginPath();ctx.arc(0,0,pulse*0.32,0,Math.PI*2);ctx.stroke();
+    }
+    ctx.restore();
+    ctx.shadowBlur=0;ctx.globalAlpha=1;
   }
 }
 
@@ -820,7 +1079,8 @@ function drawTouchIndicator(){
 function addScore(pts,x,y){
   comboCount++;comboTimer=COMBO_WINDOW;
   const mult=Math.min(comboCount,8);
-  const total=pts*mult;score+=total;
+  // NEO-NEON-2026: double coins when rewarded ad active
+  const total=pts*mult*(doubleCoinsActive?2:1);score+=total;
   const sh=document.getElementById('score-hud');
   sh.textContent='SCORE: '+score;
   sh.classList.remove('pop');void sh.offsetWidth;sh.classList.add('pop');
@@ -868,6 +1128,7 @@ function checkCollisions(){
         if(enemies[j].hp<=0){
           addScore(enemies[j].pts,enemies[j].x,enemies[j].y-20);
           mkParticles(enemies[j].x,enemies[j].y,true);
+          playSFX('explode');
           if(Math.random()<0.1)mkPowerup(enemies[j].x,enemies[j].y);
           enemies.splice(j,1);shake(2,0.12);
         }
@@ -885,6 +1146,7 @@ function checkCollisions(){
         }
         addScore(3000,W/2,150);
         triggerFlash('rgba(255,255,255,0.8)',0.4);
+        playSFX('explode');
         boss=null;bossAlive=false;
         document.getElementById('boss-bar').style.display='none';
         shake(14,0.9);showMsg('BOSS DESTROYED!');mkPowerup(W/2,180);
@@ -901,16 +1163,69 @@ function checkCollisions(){
   for(let i=powerups.length-1;i>=0;i--){
     if(dist(powerups[i],player)<30){applyPU(powerups[i].type);powerups.splice(i,1);}
   }
+  // NEO-NEON-2026: debris shootable for bonus points, neon explosion on hit
+  for(let i=bullets.length-1;i>=0;i--){
+    if(bullets[i].isEnemy)continue;
+    for(let j=debrisObjs.length-1;j>=0;j--){
+      if(dist(bullets[i],debrisObjs[j])<debrisObjs[j].size+6){
+        debrisObjs[j].hit=true;
+        addScore(debrisObjs[j].pts,debrisObjs[j].x,debrisObjs[j].y);
+        mkParticles(debrisObjs[j].x,debrisObjs[j].y,false);
+        playSFX('explode');
+        debrisObjs.splice(j,1);bullets.splice(i,1);break;
+      }
+    }
+  }
 }
 function applyPU(t){
+  // NEO-NEON-2026: apply power-up by data table id
   if(!player)return;
-  const msgs=['SIDE FIGHTERS!','POWER UP!','SHIELD!'];
-  if(t===0)player.side=true;
-  else if(t===1)player.dmg=Math.min(4,player.dmg+1);
-  else{player.shield=true;player.shieldTimer=5;}
-  showMsg(msgs[t]);shake(1,0.08);
+  const def=POWERUP_TYPES[t];
+  showMsg(def.label);shake(1,0.08);
+  playSFX('powerup');
+  if(def.id==='side')player.side=true;
+  else if(def.id==='dmg')player.dmg=Math.min(4,player.dmg+1);
+  else if(def.id==='shield'){player.shield=true;player.shieldTimer=5;}
+  else if(def.id==='cascade'){
+    // NEO-NEON-2026: Neon Cascade — multi-shot + screen shake burst
+    neonCascadeActive=true;neonCascadeTimer=8;
+    shake(5,0.35);triggerFlash('rgba(180,0,255,0.25)',0.3);
+  }else if(def.id==='void'){
+    // NEO-NEON-2026: Void Pulse — slow enemy bullets + glassmorphic ripple
+    voidPulseActive=true;voidPulseTimer=6;
+    voidPulseRipples.push({x:player.x,y:player.y,r:10,life:1});
+    triggerFlash('rgba(0,255,180,0.18)',0.4);
+  }
 }
 function shake(a,d){shakeAmt=a;shakeTime=d;}
+
+// NEO-NEON-2026: shield button — show when player has shield ready but not active
+function updateShieldBtn(){
+  const btn=document.getElementById('shield-btn');
+  if(!btn)return;
+  const show=player&&player.shieldTimer>0&&!player.shield&&gs==='playing'&&!paused;
+  btn.style.display=show?'block':'none';
+}
+function activateShield(){
+  if(!player||player.shield)return;
+  player.shield=true;playSFX('powerup');
+}
+
+// NEO-NEON-2026: Rewarded ad hooks — stubs ready for AdMob/Unity Ads integration
+// Call window.showRewardedAd(type, callback) from native side to trigger
+window.showRewardedAd=function(type,cb){
+  // Stub: in production, native layer intercepts this via webkit.messageHandlers
+  // and calls cb() after the ad completes
+  if(window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers.rewardedAd){
+    window.webkit.messageHandlers.rewardedAd.postMessage({type:type});
+    window._pendingAdCallback=cb;
+  }else{
+    // Dev fallback: simulate ad reward after 1s
+    setTimeout(cb,1000);
+  }
+};
+// Called by native after ad completes
+window.onAdRewarded=function(){if(window._pendingAdCallback){window._pendingAdCallback();window._pendingAdCallback=null;}};
 
 // WAVE MANAGER
 function updateWave(dt){
@@ -919,7 +1234,7 @@ function updateWave(dt){
   if(bossTimer<=0){
     bossTimer=30;bossAlive=true;boss=mkBoss();
     document.getElementById('boss-bar').style.display='block';
-    showMsg('BOSS INCOMING!');return;
+    playSFX('boss');showMsg('BOSS INCOMING!');return;
   }
   spawnTimer-=dt;
   if(spawnTimer<=0){
@@ -931,6 +1246,9 @@ function updateWave(dt){
       wave++;waveNeeded=6+wave*2;
       spawnInterval=Math.max(0.38,1.8-wave*0.05);
       waveSpawned=0;
+      // NEO-NEON-2026: pick new formation for next wave, clear ad bonus
+      currentFormation=getFormation(wave);formationEnemyIndex=0;
+      doubleCoinsActive=false;
       document.getElementById('wave-hud').textContent='WAVE '+wave;
       showMsg('WAVE '+wave+'!');
       showWaveBanner(wave);
@@ -950,7 +1268,7 @@ function loop(ts){
     updatePowerups(dt);updateParticles(dt);
     updateFloatingTexts(dt);updateShockwaves(dt);
     updateWave(dt);updateCombo(dt);
-    checkCollisions();
+    checkCollisions();updateShieldBtn();
     if(shakeTime>0)shakeTime-=dt;else shakeAmt=0;
   }
   ctx.save();
@@ -987,6 +1305,16 @@ function buyUpgrade(id,cost){
   sd.gems-=cost;sd.upgrades.push(id);save();
   document.getElementById('gems-display').textContent='\u{1F48E} '+sd.gems+' Gems';
   st.textContent='Upgrade applied! Active next game.';
+}
+// NEO-NEON-2026: double-coins ad reward — active for current wave
+let doubleCoinsActive=false;
+function watchAdDoubleCoins(){
+  const st=document.getElementById('shop-status');
+  st.textContent='Loading ad...';
+  window.showRewardedAd('double_coins',function(){
+    doubleCoinsActive=true;
+    st.textContent='2x Coins active this wave!';
+  });
 }
 function stripeCheckout(priceId,gems){
   if(window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers.stripeCheckout){
@@ -1038,18 +1366,18 @@ initBG();
 (function(){
   const oc=document.getElementById('overlay-canvas');
   if(!oc)return;
-  function sizeOC(){oc.width=oc.offsetWidth;oc.height=oc.offsetHeight;}
+  function sizeOC(){oc.width=window.innerWidth;oc.height=window.innerHeight;}
   sizeOC();
   const octx=oc.getContext('2d');
   const LAYERS=[
-    {count:60,speed:0.12,size:0.8,alpha:0.35},
-    {count:35,speed:0.28,size:1.3,alpha:0.55},
-    {count:15,speed:0.55,size:1.9,alpha:0.8},
+    {count:70,speed:0.15,size:0.9,alpha:0.4},
+    {count:40,speed:0.32,size:1.4,alpha:0.6},
+    {count:18,speed:0.6,size:2.0,alpha:0.85},
   ];
   const stars=[];
   LAYERS.forEach(l=>{
     for(let i=0;i<l.count;i++){
-      stars.push({x:Math.random()*oc.width,y:Math.random()*oc.height,speed:l.speed,size:l.size,alpha:l.alpha*(0.6+Math.random()*0.4)});
+      stars.push({x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight,speed:l.speed,size:l.size,alpha:l.alpha*(0.6+Math.random()*0.4)});
     }
   });
   let active=true;
@@ -1058,7 +1386,7 @@ initBG();
     octx.clearRect(0,0,oc.width,oc.height);
     stars.forEach(s=>{
       s.y+=s.speed;
-      if(s.y>oc.height){s.y=0;s.x=Math.random()*oc.width;}
+      if(s.y>oc.height){s.y=-s.size;s.x=Math.random()*oc.width;}
       octx.beginPath();
       octx.arc(s.x,s.y,s.size,0,Math.PI*2);
       octx.fillStyle='rgba(180,220,255,'+s.alpha+')';
