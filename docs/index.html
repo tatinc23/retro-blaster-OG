@@ -122,7 +122,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:#020814;touch-action
 <div id="overlay">
   <div class="title-wrap">
     <span class="title-main">RETRO BLASTER</span>
-    <span class="title-sub">NEO&nbsp;&nbsp;NEON&nbsp;&nbsp;2026</span>
   </div>
   <div class="title-divider"></div>
   <div class="title-hint">&#x1F4F1; Touch &mdash; your plane follows your finger &nbsp;|&nbsp; Auto-fire</div>
@@ -266,7 +265,6 @@ function quitToMenu(){
   function el(tag,cls,txt,style){const e=document.createElement(tag);if(cls)e.className=cls;if(txt)e.textContent=txt;if(style)Object.assign(e.style,style);return e;}
   const tw=el('div','title-wrap','');
   const tm=el('div','title-main','RETRO BLASTER');tm.style.display='block';tw.appendChild(tm);
-  const ts=el('div','title-sub','NEO\u00a0\u00a0NEON\u00a0\u00a02026');ts.style.display='block';tw.appendChild(ts);
   ov.appendChild(tw);
   ov.appendChild(el('div','title-divider',''));
   const h1=el('div','title-hint','\u{1F4F1} Touch \u2014 your plane follows your finger \u00a0|\u00a0 Auto-fire');ov.appendChild(h1);
@@ -499,7 +497,7 @@ function _sfx(type){
   if(_ac.state==='suspended')_ac.resume();
   const o=_ac.createOscillator(),g=_ac.createGain();
   o.connect(g);g.connect(_ac.destination);
-  if(type==='shoot'){o.type='square';o.frequency.setValueAtTime(880,_ac.currentTime);o.frequency.exponentialRampToValueAtTime(220,_ac.currentTime+0.08);g.gain.setValueAtTime(0.12,_ac.currentTime);g.gain.exponentialRampToValueAtTime(0.001,_ac.currentTime+0.08);o.start();o.stop(_ac.currentTime+0.08);}
+  if(type==='shoot'){o.type='square';o.frequency.setValueAtTime(880,_ac.currentTime);o.frequency.exponentialRampToValueAtTime(220,_ac.currentTime+0.08);g.gain.setValueAtTime(0.03,_ac.currentTime);g.gain.exponentialRampToValueAtTime(0.001,_ac.currentTime+0.08);o.start();o.stop(_ac.currentTime+0.08);}
   else if(type==='explode'){o.type='sawtooth';o.frequency.setValueAtTime(180,_ac.currentTime);o.frequency.exponentialRampToValueAtTime(40,_ac.currentTime+0.22);g.gain.setValueAtTime(0.22,_ac.currentTime);g.gain.exponentialRampToValueAtTime(0.001,_ac.currentTime+0.22);o.start();o.stop(_ac.currentTime+0.22);}
   else if(type==='powerup'){o.type='sine';o.frequency.setValueAtTime(440,_ac.currentTime);o.frequency.setValueAtTime(660,_ac.currentTime+0.08);o.frequency.setValueAtTime(880,_ac.currentTime+0.16);g.gain.setValueAtTime(0.18,_ac.currentTime);g.gain.exponentialRampToValueAtTime(0.001,_ac.currentTime+0.3);o.start();o.stop(_ac.currentTime+0.3);}
   else if(type==='cascade'){o.type='square';o.frequency.setValueAtTime(1200,_ac.currentTime);o.frequency.exponentialRampToValueAtTime(300,_ac.currentTime+0.15);g.gain.setValueAtTime(0.2,_ac.currentTime);g.gain.exponentialRampToValueAtTime(0.001,_ac.currentTime+0.15);o.start();o.stop(_ac.currentTime+0.15);}
