@@ -73,11 +73,20 @@ html,body{width:100%;height:100%;overflow:hidden;background:#020814;touch-action
 #lb-panel{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(2,5,18,0.97);display:none;flex-direction:column;align-items:center;padding:20px 16px;overflow-y:auto;}
 .lb-row{width:100%;display:flex;justify-content:space-between;align-items:center;padding:7px 12px;margin:2px 0;border-radius:6px;font-family:'Courier New',monospace;font-size:12px;background:rgba(8,18,45,0.6);border:1px solid rgba(30,70,160,0.2);}
 .lb-rank{color:#fa0;width:28px;}
-.lb-score{color:#0ff;flex:1;text-align:center;}
-.lb-date{color:#556;font-size:10px;}
+.lb-name{color:#adf;flex:1;text-align:left;padding:0 6px;}
+.lb-score{color:#0ff;width:80px;text-align:right;}
+.lb-date{color:#556;font-size:10px;width:28px;text-align:right;}
 .lb-row.top1{border-color:rgba(255,200,0,0.5);background:rgba(40,30,0,0.5);}
 .lb-row.top2{border-color:rgba(160,160,160,0.4);background:rgba(20,20,20,0.5);}
 .lb-row.top3{border-color:rgba(180,100,0,0.4);background:rgba(30,15,0,0.5);}
+.go-title{font-family:'Courier New',monospace;color:#f44;font-size:2.2rem;letter-spacing:4px;margin-bottom:10px;text-shadow:0 0 20px #f44;}
+.go-score{font-family:'Courier New',monospace;color:#f88;font-size:1.3rem;margin-bottom:4px;letter-spacing:2px;}
+.go-best{font-family:'Courier New',monospace;color:#fa0;font-size:1rem;margin-bottom:16px;}
+.go-name-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:8px;width:100%;max-width:260px;}
+.go-label{font-family:'Courier New',monospace;color:rgba(120,180,255,0.7);font-size:10px;letter-spacing:2px;}
+.go-name-input{background:rgba(4,12,40,0.85);border:1px solid rgba(60,140,255,0.5);border-radius:4px;color:#7df;font-family:'Courier New',monospace;font-size:14px;letter-spacing:2px;padding:8px 14px;width:100%;text-align:center;outline:none;}
+.go-name-input:focus{border-color:rgba(80,180,255,0.9);box-shadow:0 0 10px rgba(40,140,255,0.3);}
+.go-status{font-family:'Courier New',monospace;font-size:11px;min-height:16px;margin-bottom:8px;}
 #flash-overlay{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:0;background:#fff;transition:opacity 0.05s;}
 @keyframes titleFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
 @keyframes bossBarShift{0%{background-position:0% 50%;}100%{background-position:100% 50%;}}
@@ -277,19 +286,52 @@ function saveScore(){
   if(score>sd.highScore)sd.highScore=score;
   save();
 }
+function postScoreToLeaderboard(name,scoreVal,waveVal){
+  fetch('https://retro-blaster-leaderboard.chris-d6a.workers.dev/scores',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({name:name.trim().slice(0,20)||'Anonymous',score:scoreVal,wave:waveVal})
+  }).catch(()=>{});
+}
 function gameOver(){
   gs='gameover';saveScore();
+  const savedName=localStorage.getItem('rb_player_name')||'';
   const ov=document.getElementById('overlay');
   ov.style.display='flex';
   ov.textContent='';
-  function el(tag,css,txt){const e=document.createElement(tag);Object.assign(e.style,css);if(txt)e.textContent=txt;return e;}
-  function btn(cls,txt,fn){const b=document.createElement('button');b.className=cls;b.textContent=txt;b.onclick=fn;return b;}
-  ov.appendChild(el('div',{fontFamily:"'Courier New',monospace",color:'#f44',fontSize:'2.2rem',letterSpacing:'4px',marginBottom:'10px',textShadow:'0 0 20px #f44'},'GAME OVER'));
-  ov.appendChild(el('div',{fontFamily:"'Courier New',monospace",color:'#f88',fontSize:'1.3rem',marginBottom:'4px',letterSpacing:'2px'},'SCORE: '+score));
-  ov.appendChild(el('div',{fontFamily:"'Courier New',monospace",color:'#fa0',fontSize:'1rem',marginBottom:'24px'},'BEST: '+sd.highScore));
-  ov.appendChild(btn('btn-primary','\u21BA PLAY AGAIN',startGame));
-  ov.appendChild(btn('btn-secondary','\u{1F3C6} Leaderboard',openLeaderboard));
+  function mk(tag,cls,txt){const e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e;}
+  function btn(cls,txt,fn){const b=mk('button',cls,txt);b.onclick=fn;return b;}
+  ov.appendChild(mk('div','go-title','GAME OVER'));
+  ov.appendChild(mk('div','go-score','SCORE: '+score.toLocaleString()));
+  ov.appendChild(mk('div','go-best','BEST: '+sd.highScore.toLocaleString()));
+  // Name entry
+  const nameWrap=mk('div','go-name-wrap');
+  const lbl=mk('label','go-label','YOUR NAME');lbl.setAttribute('for','go-name-input');
+  const inp=mk('input','go-name-input');inp.id='go-name-input';inp.type='text';inp.maxLength=20;
+  inp.placeholder='Anonymous';inp.value=savedName;inp.setAttribute('autocomplete','off');
+  nameWrap.appendChild(lbl);nameWrap.appendChild(inp);ov.appendChild(nameWrap);
+  // Status line for submission feedback
+  const status=mk('div','go-status','');ov.appendChild(status);
+  let submitted=false;
+  function submit(){
+    if(submitted)return;submitted=true;
+    const n=inp.value.trim()||'Anonymous';
+    localStorage.setItem('rb_player_name',n);
+    status.textContent='Submitting...';status.style.color='rgba(100,200,255,0.8)';
+    fetch('https://retro-blaster-leaderboard.chris-d6a.workers.dev/scores',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name:n,score,wave})
+    }).then(r=>r.ok?r.json():Promise.reject()).then(()=>{
+      status.textContent='\u2713 Score submitted!';status.style.color='rgba(80,255,160,0.9)';
+      loadTitleLB();
+    }).catch(()=>{status.textContent='Could not submit (offline?)';status.style.color='rgba(255,100,100,0.7)';});
+  }
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter')submit();});
+  const submitBtn=btn('btn-primary','\u{1F310} SUBMIT SCORE',submit);
+  ov.appendChild(submitBtn);
+  ov.appendChild(btn('btn-secondary','\u21BA PLAY AGAIN',startGame));
+  ov.appendChild(btn('btn-secondary','\u{1F3C6} LEADERBOARD',openLeaderboard));
   ov.appendChild(btn('btn-secondary','\u2302 Menu',quitToMenu));
+  setTimeout(()=>inp.focus(),50);
 }
 
 // PLAYER
@@ -1084,23 +1126,33 @@ function openLeaderboard(){
   const rows=document.getElementById('lb-rows');
   rows.textContent='';
   const medals=['\u{1F947}','\u{1F948}','\u{1F949}'];
-  if(sd.scores.length===0){
-    const d=document.createElement('div');
-    Object.assign(d.style,{fontFamily:"'Courier New',monospace",color:'#446',fontSize:'12px',textAlign:'center',padding:'20px'});
-    d.textContent='No scores yet. Play a game!';
-    rows.appendChild(d);
-  }else{
-    const top=sd.scores.slice(0,10);
-    for(let i=0;i<top.length;i++){
-      const row=document.createElement('div');
-      row.className='lb-row'+(i===0?' top1':i===1?' top2':i===2?' top3':'');
-      const rank=document.createElement('div');rank.className='lb-rank';rank.textContent=medals[i]||('#'+(i+1));
-      const sc=document.createElement('div');sc.className='lb-score';sc.textContent=top[i].score.toLocaleString();
-      const dt=document.createElement('div');dt.className='lb-date';dt.textContent=top[i].date;
-      row.appendChild(rank);row.appendChild(sc);row.appendChild(dt);
-      rows.appendChild(row);
-    }
-  }
+  const loading=document.createElement('div');
+  Object.assign(loading.style,{fontFamily:"'Courier New',monospace",color:'rgba(100,180,255,0.6)',fontSize:'11px',textAlign:'center',padding:'20px'});
+  loading.textContent='Loading global scores...';rows.appendChild(loading);
+  fetch('https://retro-blaster-leaderboard.chris-d6a.workers.dev/scores')
+    .then(r=>r.json()).then(data=>{
+      rows.textContent='';
+      if(!data||data.length===0){
+        const d=document.createElement('div');
+        Object.assign(d.style,{fontFamily:"'Courier New',monospace",color:'#446',fontSize:'12px',textAlign:'center',padding:'20px'});
+        d.textContent='No scores yet. Be the first!';rows.appendChild(d);return;
+      }
+      data.slice(0,10).forEach((e,i)=>{
+        const row=document.createElement('div');
+        row.className='lb-row'+(i===0?' top1':i===1?' top2':i===2?' top3':'');
+        const rank=document.createElement('div');rank.className='lb-rank';rank.textContent=medals[i]||('#'+(i+1));
+        const nm=document.createElement('div');nm.className='lb-name';nm.textContent=(e.name||'Anon').slice(0,16);
+        const sc=document.createElement('div');sc.className='lb-score';sc.textContent=e.score.toLocaleString();
+        const wv=document.createElement('div');wv.className='lb-date';wv.textContent='W'+e.wave;
+        row.appendChild(rank);row.appendChild(nm);row.appendChild(sc);row.appendChild(wv);
+        rows.appendChild(row);
+      });
+    }).catch(()=>{
+      rows.textContent='';
+      const d=document.createElement('div');
+      Object.assign(d.style,{fontFamily:"'Courier New',monospace",color:'rgba(255,100,100,0.6)',fontSize:'11px',textAlign:'center',padding:'20px'});
+      d.textContent='Could not load scores';rows.appendChild(d);
+    });
 }
 function closeLeaderboard(){document.getElementById('lb-panel').style.display='none';}
 
