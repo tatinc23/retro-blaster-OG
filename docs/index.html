@@ -37,15 +37,33 @@ html,body{width:100%;height:100%;overflow:hidden;background:#020814;touch-action
 #wave-banner.slide-out{transition:transform 0.35s ease-in;transform:translateX(-110%);}
 #powerup-msg{position:absolute;top:42%;left:50%;transform:translate(-50%,-50%);color:#ff0;font-family:'Courier New',monospace;font-size:16px;font-weight:bold;pointer-events:none;opacity:0;transition:opacity 0.3s;text-shadow:0 0 12px #f80;letter-spacing:2px;white-space:nowrap;}
 #shop-btn{position:absolute;bottom:14px;right:14px;background:rgba(10,20,50,0.85);color:#6af;border:1px solid rgba(40,100,200,0.5);padding:8px 16px;font-size:11px;border-radius:20px;cursor:pointer;font-family:'Courier New',monospace;backdrop-filter:blur(6px);letter-spacing:1px;}
-#overlay{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,4,14,0.92);backdrop-filter:blur(2px);}
-.title-main{font-family:'Courier New',monospace;color:#4af;font-size:clamp(1.8rem,6vw,2.4rem);letter-spacing:6px;margin-bottom:4px;text-shadow:0 0 20px #4af,0 0 40px rgba(80,180,255,0.3);animation:titleFloat 3s ease-in-out infinite;}
-.title-sub{font-family:'Courier New',monospace;color:#6cf;font-size:1rem;letter-spacing:4px;margin-bottom:24px;text-shadow:0 0 10px rgba(100,200,255,0.5);}
-.title-hint{font-family:'Courier New',monospace;color:#3a7;font-size:11px;margin-bottom:4px;letter-spacing:0.5px;}
-.btn-primary{background:linear-gradient(135deg,#1050a0,#1a70c8);color:#fff;border:1px solid rgba(100,180,255,0.4);padding:14px 48px;font-size:1.1rem;border-radius:30px;cursor:pointer;font-family:'Courier New',monospace;letter-spacing:3px;margin-bottom:10px;box-shadow:0 0 20px rgba(20,80,200,0.4),inset 0 1px 0 rgba(255,255,255,0.1);transition:transform 0.1s;}
+/* NEO-NEON-2026: Landing page redesign */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap');
+#overlay{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(0,2,12,0.55) 0%,rgba(0,4,18,0.75) 50%,rgba(0,2,12,0.55) 100%);backdrop-filter:blur(0px);}
+#overlay::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,20,60,0.08) 3px,rgba(0,20,60,0.08) 4px);pointer-events:none;}
+#overlay::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 50%,rgba(20,80,200,0.12) 0%,transparent 70%);pointer-events:none;}
+.title-wrap{position:relative;text-align:center;margin-bottom:8px;padding:0 16px;}
+.title-main{font-family:'Orbitron','Courier New',monospace;font-weight:900;color:#fff;font-size:clamp(2.6rem,10vw,3.8rem);letter-spacing:8px;line-height:1;display:block;text-shadow:0 0 8px #fff,0 0 20px #7df,0 0 45px #4af,0 0 90px rgba(40,140,255,0.5),0 0 160px rgba(20,80,255,0.25);animation:titlePulse 3.5s ease-in-out infinite;}
+.title-sub{font-family:'Orbitron','Courier New',monospace;font-weight:700;color:#7df;font-size:clamp(1rem,4vw,1.4rem);letter-spacing:14px;display:block;margin-top:6px;text-shadow:0 0 10px #4af,0 0 30px rgba(80,180,255,0.6);animation:titlePulse 3.5s ease-in-out infinite 0.3s;}
+.title-divider{width:60%;height:1px;background:linear-gradient(90deg,transparent,rgba(100,200,255,0.6),rgba(255,255,255,0.4),rgba(100,200,255,0.6),transparent);margin:18px auto 20px;box-shadow:0 0 8px rgba(100,200,255,0.4);}
+.title-hint{font-family:'Courier New',monospace;color:rgba(100,200,180,0.7);font-size:10px;margin-bottom:5px;letter-spacing:1px;text-align:center;}
+.btn-primary{background:linear-gradient(135deg,rgba(10,60,160,0.9),rgba(20,100,220,0.9));color:#fff;border:1px solid rgba(120,200,255,0.6);padding:16px 56px;font-size:1.05rem;border-radius:4px;cursor:pointer;font-family:'Orbitron','Courier New',monospace;letter-spacing:5px;font-weight:700;margin-bottom:12px;box-shadow:0 0 24px rgba(20,100,220,0.5),0 0 60px rgba(20,80,200,0.2),inset 0 1px 0 rgba(255,255,255,0.15);transition:transform 0.1s,box-shadow 0.1s;animation:btnPulse 2.5s ease-in-out infinite;}
 .btn-primary:active{transform:scale(0.97);}
-.btn-secondary{background:rgba(10,20,50,0.8);color:#8af;border:1px solid rgba(40,100,200,0.4);padding:10px 28px;font-size:0.95rem;border-radius:30px;cursor:pointer;font-family:'Courier New',monospace;margin-bottom:8px;letter-spacing:1px;transition:transform 0.1s;}
+.btn-secondary{background:rgba(5,15,40,0.7);color:rgba(140,190,255,0.85);border:1px solid rgba(40,100,200,0.35);padding:11px 32px;font-size:0.8rem;border-radius:4px;cursor:pointer;font-family:'Courier New',monospace;margin-bottom:8px;letter-spacing:2px;transition:transform 0.1s,border-color 0.1s;backdrop-filter:blur(4px);}
 .btn-secondary:active{transform:scale(0.97);}
-#hs-display{color:#fa0;font-family:'Courier New',monospace;font-size:13px;}
+.btn-secondary:hover{border-color:rgba(80,160,255,0.6);}
+#hs-display{color:rgba(255,180,40,0.8);font-family:'Courier New',monospace;font-size:11px;letter-spacing:2px;margin-top:8px;}
+/* NEO-NEON-2026: Live global leaderboard on title screen */
+#title-lb{margin-top:16px;width:88%;max-width:340px;border:1px solid rgba(0,255,255,0.15);border-radius:6px;padding:10px 14px;background:rgba(0,10,30,0.5);backdrop-filter:blur(6px);}
+#title-lb-label{font-family:'Courier New',monospace;color:rgba(100,200,255,0.6);font-size:9px;letter-spacing:3px;text-align:center;margin-bottom:8px;}
+.tlb-row{display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.tlb-row:last-child{border-bottom:none;}
+.tlb-rank{font-family:'Courier New',monospace;font-size:10px;color:#fa0;width:20px;}
+.tlb-name{font-family:'Courier New',monospace;font-size:10px;color:rgba(180,220,255,0.85);flex:1;padding:0 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tlb-score{font-family:'Courier New',monospace;font-size:10px;color:#0ff;text-shadow:0 0 6px rgba(0,255,255,0.5);}
+.tlb-row.rank1 .tlb-score{color:#ffd700;text-shadow:0 0 8px rgba(255,215,0,0.6);}
+@keyframes titlePulse{0%,100%{opacity:1;text-shadow:0 0 8px #fff,0 0 20px #7df,0 0 45px #4af,0 0 90px rgba(40,140,255,0.5),0 0 160px rgba(20,80,255,0.25);}50%{opacity:0.92;text-shadow:0 0 12px #fff,0 0 28px #9ef,0 0 60px #6cf,0 0 120px rgba(60,160,255,0.6),0 0 200px rgba(30,100,255,0.3);}}
+@keyframes btnPulse{0%,100%{box-shadow:0 0 24px rgba(20,100,220,0.5),0 0 60px rgba(20,80,200,0.2),inset 0 1px 0 rgba(255,255,255,0.15);}50%{box-shadow:0 0 35px rgba(40,140,255,0.7),0 0 80px rgba(20,100,220,0.3),inset 0 1px 0 rgba(255,255,255,0.15);}}
 #pause-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,4,14,0.85);display:none;flex-direction:column;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
 #shop-panel{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(2,5,18,0.97);display:none;flex-direction:column;align-items:center;padding:20px 16px;overflow-y:auto;}
 .sitem{background:rgba(8,18,45,0.9);border:1px solid rgba(30,70,160,0.4);border-radius:8px;padding:9px 14px;margin:3px 0;width:100%;display:flex;justify-content:space-between;align-items:center;gap:8px;}
@@ -93,15 +111,21 @@ html,body{width:100%;height:100%;overflow:hidden;background:#020814;touch-action
 </div>
 
 <div id="overlay">
-  <div class="title-main">RETRO</div>
-  <div class="title-sub">BLASTER</div>
-  <div class="title-hint">&#x1F4F1; Touch anywhere &mdash; your plane follows your finger</div>
-  <div class="title-hint">&#x2328;&#xFE0F; WASD / Arrow keys on desktop</div>
-  <div class="title-hint" style="margin-bottom:24px;">&#x2708;&#xFE0F; Auto-fire &middot; ESC = Pause</div>
-  <button class="btn-primary" onclick="startGame()">&#x25B6; START</button>
-  <button class="btn-secondary" onclick="openShop()">&#x1F6D2; SHOP</button>
-  <button class="btn-secondary" onclick="openLeaderboard()">&#x1F3C6; LEADERBOARD</button>
+  <div class="title-wrap">
+    <span class="title-main">RETRO BLASTER</span>
+    <span class="title-sub">NEO&nbsp;&nbsp;NEON&nbsp;&nbsp;2026</span>
+  </div>
+  <div class="title-divider"></div>
+  <div class="title-hint">&#x1F4F1; Touch &mdash; your plane follows your finger &nbsp;|&nbsp; Auto-fire</div>
+  <div class="title-hint" style="margin-bottom:20px;">&#x2328;&#xFE0F; WASD / Arrow keys &nbsp;|&nbsp; ESC = Pause</div>
+  <button class="btn-primary" onclick="startGame()">&#x25B6;&nbsp;&nbsp;START</button>
+  <button class="btn-secondary" onclick="openShop()">&#x1F6D2;&nbsp; SHOP</button>
+  <button class="btn-secondary" onclick="openLeaderboard()">&#x1F3C6;&nbsp; LEADERBOARD</button>
   <div id="hs-display" style="margin-top:10px;">BEST: 0</div>
+  <div id="title-lb">
+    <div id="title-lb-label">&#x1F30D;&nbsp; GLOBAL TOP 5</div>
+    <div id="title-lb-rows"></div>
+  </div>
 </div>
 
 <div id="pause-overlay">
@@ -231,17 +255,19 @@ function quitToMenu(){
   ov.style.display='flex';
   ov.textContent='';
   function el(tag,cls,txt,style){const e=document.createElement(tag);if(cls)e.className=cls;if(txt)e.textContent=txt;if(style)Object.assign(e.style,style);return e;}
-  ov.appendChild(el('div','title-main','RETRO'));
-  ov.appendChild(el('div','title-sub','BLASTER'));
-  const hints=['\u{1F4F1} Touch anywhere \u2014 your plane follows your finger','\u2328\uFE0F WASD / Arrow keys on desktop','\u2708\uFE0F Auto-fire \u00B7 ESC = Pause'];
-  hints.forEach((h,i)=>{const d=el('div','title-hint',h);if(i===2)d.style.marginBottom='24px';ov.appendChild(d);});
+  const tw=el('div','title-wrap','');
+  const tm=el('div','title-main','RETRO BLASTER');tm.style.display='block';tw.appendChild(tm);
+  const ts=el('div','title-sub','NEO\u00a0\u00a0NEON\u00a0\u00a02026');ts.style.display='block';tw.appendChild(ts);
+  ov.appendChild(tw);
+  ov.appendChild(el('div','title-divider',''));
+  const h1=el('div','title-hint','\u{1F4F1} Touch \u2014 your plane follows your finger \u00a0|\u00a0 Auto-fire');ov.appendChild(h1);
+  const h2=el('div','title-hint','\u2328\uFE0F WASD / Arrow keys \u00a0|\u00a0 ESC = Pause');h2.style.marginBottom='20px';ov.appendChild(h2);
   function btn(cls,txt,fn){const b=el('button',cls,txt);b.onclick=fn;return b;}
-  ov.appendChild(btn('btn-primary','\u25B6 START',startGame));
-  ov.appendChild(btn('btn-secondary','\u{1F6D2} SHOP',openShop));
-  ov.appendChild(btn('btn-secondary','\u{1F3C6} LEADERBOARD',openLeaderboard));
-  const hs=el('div','','BEST: '+sd.highScore,{marginTop:'10px',fontFamily:"'Courier New',monospace",color:'#fa0',fontSize:'13px'});
-  hs.id='hs-display';
-  ov.appendChild(hs);
+  ov.appendChild(btn('btn-primary','\u25B6\u00a0\u00a0START',startGame));
+  ov.appendChild(btn('btn-secondary','\u{1F6D2}\u00a0 SHOP',openShop));
+  ov.appendChild(btn('btn-secondary','\u{1F3C6}\u00a0 LEADERBOARD',openLeaderboard));
+  const hs=el('div','','BEST: '+sd.highScore,{marginTop:'10px',fontFamily:"'Courier New',monospace",color:'rgba(255,180,40,0.8)',fontSize:'11px',letterSpacing:'2px'});
+  hs.id='hs-display';ov.appendChild(hs);
 }
 function saveScore(){
   const entry={score,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'})};
@@ -1079,6 +1105,30 @@ function openLeaderboard(){
 function closeLeaderboard(){document.getElementById('lb-panel').style.display='none';}
 
 initBG();
+
+// NEO-NEON-2026: Live global leaderboard on title screen
+function loadTitleLB(){
+  const medals=['1.','2.','3.','4.','5.'];
+  fetch('https://retro-blaster-leaderboard.chris-d6a.workers.dev/scores')
+    .then(r=>r.json()).then(data=>{
+      const rows=document.getElementById('title-lb-rows');if(!rows)return;
+      while(rows.firstChild)rows.removeChild(rows.firstChild);
+      data.slice(0,5).forEach((e,i)=>{
+        const sc=e.score>=1000000?(e.score/1000000).toFixed(1)+'M':e.score>=1000?(e.score/1000).toFixed(0)+'K':String(e.score);
+        const row=document.createElement('div');row.className='tlb-row'+(i===0?' rank1':'');
+        const rk=document.createElement('span');rk.className='tlb-rank';rk.textContent=medals[i];
+        const nm=document.createElement('span');nm.className='tlb-name';nm.textContent=(e.name||'Anon').slice(0,16);
+        const sv=document.createElement('span');sv.className='tlb-score';sv.textContent=sc;
+        row.appendChild(rk);row.appendChild(nm);row.appendChild(sv);rows.appendChild(row);
+      });
+    }).catch(()=>{
+      const rows=document.getElementById('title-lb-rows');if(!rows)return;
+      const d=document.createElement('div');
+      Object.assign(d.style,{fontFamily:'monospace',fontSize:'9px',color:'rgba(100,150,200,0.4)',textAlign:'center',padding:'4px'});
+      d.textContent='could not load scores';rows.appendChild(d);
+    });
+}
+loadTitleLB();
 
 // SERVICE WORKER
 if ('serviceWorker' in navigator) {
