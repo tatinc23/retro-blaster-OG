@@ -23,13 +23,23 @@ When a Copilot run fails with `CAPIError`, `BodyTimeoutError`, `HTTP/2 GOAWAY`, 
 - Wrangler OAuth token is at `~/Library/Preferences/.wrangler/config/default.toml` (has zone:read but NOT zone:write)
 - Cloudflare account ID: `d6a266be494cf336045c669dd5438b2b` (TAT_Inc_)
 - Pages project: `callemiguel-shooter-ios` → deploys to `callemiguel-shooter-ios.pages.dev` and `retroblaster.tatinc.us`
-- Deploy command: `cd /private/tmp/claude-501/pages-deploy && GITHUB_TOKEN="" wrangler pages deploy . --project-name=callemiguel-shooter-ios --branch=main`
+- Deploy source of truth: `docs/` folder in this repo (tatinc23/callemiguel-shooter-ios on main branch)
+- Deploy command (manual wrangler fallback): `cd ~/Github/callemiguel-shooter-ios/docs && GITHUB_TOKEN="" wrangler pages deploy . --project-name=callemiguel-shooter-ios --branch=main`
+- **Preferred deploy**: Push to GitHub main branch — CF Pages is git-connected to `docs/` folder and auto-deploys
 
 ## iOS Repo
 
-- iOS repo: `tatinc23/callemiguel-shooter-ios` — push files via `gh api --method PUT`
-- Game HTML source of truth: `/private/tmp/claude-501/pages-deploy/index.html` — sync to iOS repo after changes
+- iOS repo: `tatinc23/callemiguel-shooter-ios` — push files via GitHub MCP or `gh api --method PUT`
+- Game HTML source of truth: `docs/index.html` in this repo (NOT a temp dir anymore)
 - `DEVELOPMENT_TEAM` placeholder still in `project.pbxproj` — user must set in Xcode manually
+
+## PWA Files
+
+- `docs/manifest.json` — PWA manifest (name: Retro Blaster, standalone display, dark theme)
+- `docs/sw.js` — service worker (cache-first, cache key: retro-blaster-v1)
+- `docs/icon-192.png` — PWA icon 192×192
+- `docs/icon-512.png` — PWA icon 512×512
+- All linked from `docs/index.html` `<head>` section
 
 ## Preview Server
 
