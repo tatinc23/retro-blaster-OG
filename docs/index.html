@@ -92,9 +92,9 @@ html,body{width:100%;height:100%;overflow:hidden;background:#020814;touch-action
 </div>
 
 <div id="overlay">
-  <div class="title-main">CALLE MIGUEL</div>
-  <div class="title-sub">SHOOTER</div>
-  <div class="title-hint">&#x1F4F1; Touch anywhere — your plane follows your finger</div>
+  <div class="title-main">RETRO</div>
+  <div class="title-sub">BLASTER</div>
+  <div class="title-hint">&#x1F4F1; Touch anywhere &mdash; your plane follows your finger</div>
   <div class="title-hint">&#x2328;&#xFE0F; WASD / Arrow keys on desktop</div>
   <div class="title-hint" style="margin-bottom:24px;">&#x2708;&#xFE0F; Auto-fire &middot; ESC = Pause</div>
   <button class="btn-primary" onclick="startGame()">&#x25B6; START</button>
@@ -229,8 +229,8 @@ function quitToMenu(){
   ov.style.display='flex';
   ov.textContent='';
   function el(tag,cls,txt,style){const e=document.createElement(tag);if(cls)e.className=cls;if(txt)e.textContent=txt;if(style)Object.assign(e.style,style);return e;}
-  ov.appendChild(el('div','title-main','CALLE MIGUEL'));
-  ov.appendChild(el('div','title-sub','SHOOTER'));
+  ov.appendChild(el('div','title-main','RETRO'));
+  ov.appendChild(el('div','title-sub','BLASTER'));
   const hints=['\u{1F4F1} Touch anywhere \u2014 your plane follows your finger','\u2328\uFE0F WASD / Arrow keys on desktop','\u2708\uFE0F Auto-fire \u00B7 ESC = Pause'];
   hints.forEach((h,i)=>{const d=el('div','title-hint',h);if(i===2)d.style.marginBottom='24px';ov.appendChild(d);});
   function btn(cls,txt,fn){const b=el('button',cls,txt);b.onclick=fn;return b;}
