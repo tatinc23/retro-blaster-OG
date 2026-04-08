@@ -7,7 +7,7 @@
 When a Copilot run fails with `CAPIError`, `BodyTimeoutError`, `HTTP/2 GOAWAY`, or firewall warnings:
 - These are **infrastructure failures** (network/firewall blocking the Copilot agent's API calls), not code bugs
 - Do NOT re-run the job or attempt retries — each run costs money and time
-- **Immediately tell the user** what the root cause is and what they need to do manually (e.g. add a host to the firewall allow list, re-run from their side)
+- **Immediately tell the user** what the root cause is and what they need to do manually
 - Do not read through 250KB of logs trying to find a code fix — there is none
 
 ## General Cost Awareness
@@ -20,21 +20,23 @@ When a Copilot run fails with `CAPIError`, `BodyTimeoutError`, `HTTP/2 GOAWAY`, 
 - Node is managed via nvm — always prefix: `export NVM_DIR="$HOME/.nvm" && . "$NVM_DIR/nvm.sh"`
 - `gh` and `wrangler` are at `/usr/local/bin/` — add `export PATH="/usr/local/bin:$PATH"` when needed
 - `GITHUB_TOKEN` env var may be set in shell and overrides gh keyring — prefix commands with `GITHUB_TOKEN=""`
-- Wrangler OAuth token is at `~/Library/Preferences/.wrangler/config/default.toml` (has zone:read but NOT zone:write)
-- Cloudflare account ID: `d6a266be494cf336045c669dd5438b2b` (TAT_Inc_)
-- Pages project: `1945-reborn` → deploys to `1945-reborn.pages.dev` and `retroblaster.tatinc.us`
-- Deploy command: `cd /private/tmp/claude-501/pages-deploy && GITHUB_TOKEN="" wrangler pages deploy . --project-name=1945-reborn --branch=main`
 
-## iOS Repo
+## Project: Retro Blaster
 
-- iOS repo: `kenadams1990/callemiguel-shooter-ios` — push files via `gh api --method PUT`
-- Game HTML source of truth: `/private/tmp/claude-501/pages-deploy/index.html` — sync to iOS repo after changes
-- `DEVELOPMENT_TEAM` placeholder still in `project.pbxproj` — user must set in Xcode manually
+- **Repo:** tatinc23/callemiguel-shooter-ios | **Local:** `/Users/cawc/Github/callemiguel-shooter-ios`
+- **Live:** retroblaster.tatinc.us | **CF Pages project:** `callemiguel-shooter-ios` (tatinc23 org)
+- **Source of truth (web):** `docs/index.html` — edit this file only for web changes
+- **iOS file:** `CallemiguelShooter/Resources/game.html` — iOS-specific (fixed viewport, dvh). Do NOT edit unless working on iOS. Currently out of sync with docs/index.html intentionally (iOS blocked on Apple Dev enrollment).
+- **CF Pages build output dir:** `docs` — must be set in CF Pages Settings → Build configuration. If blank, CF serves repo root (wrong file).
+- **Deploy:** `git push origin main` → CF Pages auto-deploys. Verify deployment succeeded in Deployments tab before declaring done. Curl the live URL to confirm correct code is serving.
+- **Leaderboard worker:** `https://retro-blaster-leaderboard.chris-d6a.workers.dev` — `GET /scores` returns `[{name,score,wave,created_at}]`, `POST /scores` accepts `{name,score,wave}`
+- **Cache:** `docs/_headers` sets `Cache-Control: no-cache` on HTML — do not remove this file
+- **`DEVELOPMENT_TEAM`** placeholder still in `project.pbxproj` — user must set in Xcode manually
 
 ## Preview Server
 
-- Local preview server (port 7432) serves static files but does NOT hot-reload — call `location.reload()` via `preview_eval` after edits
-- Preview shows desktop viewport (~750px wide); game wraps to 480px max-width so layout looks off — trust mobile for final verification
+- Local preview server (port 7432) slows Ken's Mac — use CF Pages deploys for verification instead
+- Preview shows desktop viewport (~750px wide); game wraps to 480px max-width — trust mobile for final verification
 
 ## Cloudflare DNS
 
