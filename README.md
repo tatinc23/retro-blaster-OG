@@ -3,7 +3,9 @@
 A free, open-source arcade shooter. Play it in your browser or on mobile — no install, no account, no ads. Great for passing the time or 🚽 breaks. Can you crack the top 10 GLOBAL leaderboard?
 
 **Play now:** [retroblaster.tatinc.us](https://retroblaster.tatinc.us)
-https://raw.githubusercontent.com/tatinc23/tat-app-store/main/gifs/retro-blaster.gif
+
+![Retro Blaster gameplay](https://raw.githubusercontent.com/tatinc23/tat-app-store/main/gifs/retro-blaster.gif)
+
 ---
 
 ## How to Play
