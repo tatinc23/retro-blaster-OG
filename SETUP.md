@@ -1,23 +1,31 @@
-# Calle Miguel Shooter — iOS Setup Guide
+# Retro Blaster — iOS Setup Guide
+
+This covers building the iOS WKWebView wrapper in Xcode. The web game requires no setup — just open `docs/index.html`.
+
+## Prerequisites
+
+- Xcode 15+
+- Apple Developer account (required to run on device or submit to App Store)
 
 ## Open in Xcode
-1. Open Xcode 15+
-2. File → Open → select `/tmp/CallemiguelShooter-iOS/CallemiguelShooter.xcodeproj`
 
-## Add Your Team ID (required to run on device or submit)
+1. Clone the repo:
+   ```bash
+   git clone https://github.com/tatinc23/retro-blaster.git
+   cd retro-blaster
+   open CallemiguelShooter.xcodeproj
+   ```
+2. Xcode opens the `CallemiguelShooter` project (internal name — unrelated to the game's public name).
+
+## Set Your Team ID
+
 1. Click the project root (blue icon) → select **CallemiguelShooter** target → **Signing & Capabilities**
 2. Under **Team**, select your Apple Developer account
-   - Or open `CallemiguelShooter.xcodeproj/project.pbxproj` and replace both `REPLACE_WITH_TEAM_ID` with your 10-character Team ID (found at developer.apple.com → Account → Membership)
 
-## Add Stripe Payment Links
-Open `CallemiguelShooter/StripeHandler.swift` and replace the 3 placeholder URLs with your real Stripe Payment Links.
-
-In Stripe Dashboard, set the "After payment" redirect URL for each Payment Link to:
-- 50 gems link  → `callemiguel://stripe-success?gems=50`
-- 120 gems link → `callemiguel://stripe-success?gems=120`
-- 300 gems link → `callemiguel://stripe-success?gems=300`
+   Or manually: open `CallemiguelShooter.xcodeproj/project.pbxproj` and replace `REPLACE_WITH_TEAM_ID` with your 10-character Team ID (found at developer.apple.com → Account → Membership).
 
 ## Add App Icon
+
 Add a 1024×1024 PNG named `AppIcon.png` to:
 `CallemiguelShooter/Assets.xcassets/AppIcon.appiconset/`
 
@@ -29,20 +37,23 @@ Update `Contents.json` in that folder:
 }
 ```
 
-## Test on Simulator
-1. Select any iPhone simulator in Xcode toolbar
-2. ▶ Build & Run — game loads fullscreen. Shop shows "Stripe not configured yet." until links are added.
+## Run on Simulator
 
-## Test on Device
-1. Connect iPhone via USB, select it in Xcode toolbar
-2. ▶ Build & Run (requires Team ID set above)
+1. Select any iPhone simulator in the Xcode toolbar
+2. Press ▶ to build and run
+
+## Run on Device
+
+1. Connect your iPhone via USB and select it in the Xcode toolbar
+2. Press ▶ (requires Team ID set above)
 
 ## Submit to App Store
+
 1. Product → Archive
 2. Distribute App → App Store Connect → Upload
-3. In App Store Connect: Category = Games → Action, Age rating = 4+, add Privacy Policy URL
+3. In App Store Connect: Category = Games → Action, Age rating = 4+
 
-## External Payment Note
-This app uses Stripe Payment Links opened in Safari (SFSafariViewController).
-Compliant with App Store guidelines as of 2025 for US apps (Epic v. Apple ruling).
-No StoreKit/IAP required.
+## Notes
+
+- **In-app purchases:** Not implemented. The iOS wrapper loads the web game directly — there is no payment integration in this repo.
+- **Game source:** The game lives entirely in `docs/index.html`. Changes there are automatically picked up by the WebView.
