@@ -24,8 +24,8 @@ Grab power-ups (⚡) to unlock side fighters and weapon upgrades. Shield (🛡�
 No build step. Just open the file:
 
 ```bash
-git clone https://github.com/tatinc23/callemiguel-shooter-ios.git
-cd callemiguel-shooter-ios
+git clone https://github.com/tatinc23/retro-blaster.git
+cd retro-blaster
 open docs/index.html
 ```
 
@@ -44,12 +44,12 @@ docs/
   index.html   # The entire game — one self-contained HTML file
   _headers     # Cloudflare Pages cache rules
 CallemiguelShooter/
-  # iOS WKWebView wrapper (requires Apple Developer account to build)
+  # iOS WKWebView wrapper (internal name — requires Apple Developer account to build)
 ```
 
 The web game lives entirely in `docs/index.html`. That's the file to edit for gameplay changes.
 
-The `CallemiguelShooter/` folder is an iOS Xcode project that wraps the game in a native WebView. You need an Apple Developer account and your own Team ID to build it — set `DEVELOPMENT_TEAM` in Xcode under Signing & Capabilities.
+The `CallemiguelShooter/` folder is an iOS Xcode project (internal name) that wraps the game in a native WebView. You need an Apple Developer account and your own Team ID to build it — set `DEVELOPMENT_TEAM` in Xcode under Signing & Capabilities.
 
 ---
 
