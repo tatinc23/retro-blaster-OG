@@ -1,4 +1,4 @@
-<\!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -127,7 +127,7 @@ resize();window.addEventListener('resize',resize);
 
 // PERSISTENCE
 let sd={highScore:0,gems:0,unlocked:['default'],selected:'default',upgrades:[],scores:[]};
-try{const s=localStorage.getItem('1945rb');if(s)sd=JSON.parse(s);if(\!sd.scores)sd.scores=[];}catch(e){}
+try{const s=localStorage.getItem('1945rb');if(s)sd=JSON.parse(s);if(!sd.scores)sd.scores=[];}catch(e){}
 function save(){try{localStorage.setItem('1945rb',JSON.stringify(sd));}catch(e){}}
 document.getElementById('hs-display').textContent='BEST: '+sd.highScore;
 
@@ -203,7 +203,7 @@ function startGame(){
   document.getElementById('combo-badge').classList.remove('active');
   showWaveBanner(1);
 }
-function togglePause(){paused=\!paused;document.getElementById('pause-overlay').style.display=paused?'flex':'none';}
+function togglePause(){paused=!paused;document.getElementById('pause-overlay').style.display=paused?'flex':'none';}
 function resumeGame(){paused=false;document.getElementById('pause-overlay').style.display='none';}
 function quitToMenu(){
   paused=false;document.getElementById('pause-overlay').style.display='none';
@@ -279,8 +279,8 @@ function gameOver(){
 
 // PLAYER
 function mkPlayer(){
-  const px=touchActive&&touchX\!=null?touchX:W/2;
-  const py=touchActive&&touchY\!=null?touchY:H-140;
+  const px=touchActive&&touchX!=null?touchX:W/2;
+  const py=touchActive&&touchY!=null?touchY:H-140;
   return{x:px,y:py,
     speed:300+(sd.selected==='red_falcon'?70:0)+(sd.upgrades.includes('engines')?80:0),
     fireRate:sd.selected==='shadow_viper'?0.07:sd.upgrades.includes('wings')?0.1:0.13,
@@ -292,7 +292,7 @@ function mkPlayer(){
 }
 function updatePlayer(dt){
   const p=player;
-  if(touchActive&&touchX\!=null){
+  if(touchActive&&touchX!=null){
     const dx=touchX-p.x,dy=touchY-p.y;
     const d=Math.sqrt(dx*dx+dy*dy);
     const spd=Math.min(d/dt,p.speed*2.5);
@@ -324,7 +324,7 @@ function updatePlayer(dt){
   p.exhaustTrail.forEach(t=>{t.life-=dt*3;});
 }
 function hitPlayer(){
-  if(\!player)return;
+  if(!player)return;
   if(player.shield){player.shield=false;player.shieldTimer=0;shake(3,0.2);return;}
   if(player.invTimer>0)return;
   lives--;player.invTimer=2.2;shake(7,0.45);
@@ -376,9 +376,9 @@ function mkBoss(){
   return{x:W/2,y:-120,hp:hp,maxHp:hp,phase:1,dir:1,t:0,shootTimer:2.4,done:false,flash:0,turretAngle:0};
 }
 function updateBoss(dt){
-  if(\!boss)return;boss.t+=dt;if(boss.flash>0)boss.flash-=dt;
+  if(!boss)return;boss.t+=dt;if(boss.flash>0)boss.flash-=dt;
   boss.turretAngle+=dt*1.2;
-  if(\!boss.done){
+  if(!boss.done){
     boss.y+=120*dt;
     bossEntryTrail.push({x:boss.x+(Math.random()-0.5)*16,y:boss.y+60,life:1});
     if(boss.y>=150){boss.done=true;bossEntryTrail=[];}
@@ -400,7 +400,7 @@ function updateBoss(dt){
   }
   if(boss.hp<=boss.maxHp*0.5&&boss.phase===1){
     boss.phase=2;
-    if(\!phase2Flashed){phase2Flashed=true;triggerFlash('rgba(255,0,0,0.35)',0.3);doShockwave(boss.x,boss.y);}
+    if(!phase2Flashed){phase2Flashed=true;triggerFlash('rgba(255,0,0,0.35)',0.3);doShockwave(boss.x,boss.y);}
   }
   const pct=Math.max(0,boss.hp/boss.maxHp);
   document.getElementById('boss-bar-fill').style.width=(pct*100)+'%';
@@ -544,7 +544,7 @@ function getPlaneColors(){
 
 // PLAYER DRAW
 function drawPlayer(){
-  if(\!player||\!player.visible)return;
+  if(!player||!player.visible)return;
   const p=player;const{x,y}=p;
   const col=getPlaneColors();
   ctx.save();
@@ -653,7 +653,7 @@ function drawEnemy(e){
 
 // BOSS DRAW
 function drawBoss(){
-  if(\!boss)return;const{x,y}=boss;
+  if(!boss)return;const{x,y}=boss;
   for(let i=0;i<bossEntryTrail.length;i++){
     const t=bossEntryTrail[i];t.life-=0.04;if(t.life<=0)continue;
     ctx.globalAlpha=t.life*0.8;
@@ -708,7 +708,7 @@ function drawBullets(){
   for(let i=0;i<bullets.length;i++){
     const b=bullets[i];
     ctx.save();ctx.translate(b.x,b.y);ctx.rotate(b.ang);
-    if(\!b.isEnemy){
+    if(!b.isEnemy){
       ctx.shadowColor='rgba(0,220,255,0.9)';ctx.shadowBlur=10;
       ctx.fillStyle='rgba(0,220,255,0.9)';
       ctx.beginPath();ctx.ellipse(0,0,3.5,9,0,0,Math.PI*2);ctx.fill();
@@ -780,7 +780,7 @@ function drawFloatingTexts(){
 
 // TOUCH INDICATOR
 function drawTouchIndicator(){
-  if(\!touchActive||\!player||gs\!=='playing')return;
+  if(!touchActive||!player||gs!=='playing')return;
   ctx.strokeStyle='rgba(255,255,255,0.12)';ctx.lineWidth=1.5;
   ctx.beginPath();ctx.arc(touchX,touchY,18,0,Math.PI*2);ctx.stroke();
 }
@@ -794,7 +794,7 @@ function addScore(pts,x,y){
   sh.textContent='SCORE: '+score;
   sh.classList.remove('pop');void sh.offsetWidth;sh.classList.add('pop');
   setTimeout(function(){sh.classList.remove('pop');},150);
-  if(x\!=null)mkFloatingText(x,y,'+'+(total>=1000?(total/1000).toFixed(1)+'K':total),mult>1?'#ffd000':'#0ff');
+  if(x!=null)mkFloatingText(x,y,'+'+(total>=1000?(total/1000).toFixed(1)+'K':total),mult>1?'#ffd000':'#0ff');
   if(mult>1){
     document.getElementById('combo-text').textContent='x'+mult+' COMBO';
     document.getElementById('combo-badge').classList.add('active');
@@ -827,7 +827,7 @@ function showWaveBanner(w){
 // COLLISIONS
 function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y);}
 function checkCollisions(){
-  if(\!player)return;
+  if(!player)return;
   for(let i=bullets.length-1;i>=0;i--){
     if(bullets[i].isEnemy)continue;
     const b=bullets[i];let hit=false;
@@ -856,12 +856,12 @@ function checkCollisions(){
         triggerFlash('rgba(255,255,255,0.8)',0.4);
         boss=null;bossAlive=false;
         document.getElementById('boss-bar').style.display='none';
-        shake(14,0.9);showMsg('BOSS DESTROYED\!');mkPowerup(W/2,180);
+        shake(14,0.9);showMsg('BOSS DESTROYED!');mkPowerup(W/2,180);
       }
     }
   }
   for(let i=bullets.length-1;i>=0;i--){
-    if(\!bullets[i].isEnemy)continue;
+    if(!bullets[i].isEnemy)continue;
     if(dist(bullets[i],player)<18){mkParticles(bullets[i].x,bullets[i].y);bullets.splice(i,1);hitPlayer();}
   }
   for(let j=enemies.length-1;j>=0;j--){
@@ -872,8 +872,8 @@ function checkCollisions(){
   }
 }
 function applyPU(t){
-  if(\!player)return;
-  const msgs=['SIDE FIGHTERS\!','POWER UP\!','SHIELD\!'];
+  if(!player)return;
+  const msgs=['SIDE FIGHTERS!','POWER UP!','SHIELD!'];
   if(t===0)player.side=true;
   else if(t===1)player.dmg=Math.min(4,player.dmg+1);
   else{player.shield=true;player.shieldTimer=5;}
@@ -888,7 +888,7 @@ function updateWave(dt){
   if(bossTimer<=0){
     bossTimer=30;bossAlive=true;boss=mkBoss();
     document.getElementById('boss-bar').style.display='block';
-    showMsg('BOSS INCOMING\!');return;
+    showMsg('BOSS INCOMING!');return;
   }
   spawnTimer-=dt;
   if(spawnTimer<=0){
@@ -901,7 +901,7 @@ function updateWave(dt){
       spawnInterval=Math.max(0.38,1.8-wave*0.05);
       waveSpawned=0;
       document.getElementById('wave-hud').textContent='WAVE '+wave;
-      showMsg('WAVE '+wave+'\!');
+      showMsg('WAVE '+wave+'!');
       showWaveBanner(wave);
     }
   }
@@ -911,7 +911,7 @@ function updateWave(dt){
 var last=0;
 function loop(ts){
   const dt=Math.min(0.05,(ts-last)/1000);last=ts;
-  if(gs==='playing'&&\!paused){
+  if(gs==='playing'&&!paused){
     updateBG(dt);
     if(player)updatePlayer(dt);
     updateBullets(dt);updateEnemies(dt);
