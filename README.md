@@ -4,7 +4,7 @@ A free, open-source arcade shooter. Play it in your browser or on mobile — no 
 
 **Play now:** [retroblaster.tatinc.us](https://retroblaster.tatinc.us)
 
-![Retro Blaster gameplay](https://raw.githubusercontent.com/tatinc23/tat-app-store/main/gifs/retro-blaster.gif)
+![Retro Blaster gameplay](docs/retro-blaster.gif)
 
 ---
 
