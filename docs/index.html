@@ -247,7 +247,31 @@ function gameOver(){
   function btn(cls,txt,fn){const b=document.createElement('button');b.className=cls;b.textContent=txt;b.onclick=fn;return b;}
   ov.appendChild(el('div',{fontFamily:"'Courier New',monospace",color:'#f44',fontSize:'2.2rem',letterSpacing:'4px',marginBottom:'10px',textShadow:'0 0 20px #f44'},'GAME OVER'));
   ov.appendChild(el('div',{fontFamily:"'Courier New',monospace",color:'#f88',fontSize:'1.3rem',marginBottom:'4px',letterSpacing:'2px'},'SCORE: '+score));
-  ov.appendChild(el('div',{fontFamily:"'Courier New',monospace",color:'#fa0',fontSize:'1rem',marginBottom:'24px'},'BEST: '+sd.highScore));
+  ov.appendChild(el('div',{fontFamily:"'Courier New',monospace",color:'#fa0',fontSize:'1rem',marginBottom:'16px'},'BEST: '+sd.highScore));
+  const nameWrap=document.createElement('div');
+  Object.assign(nameWrap.style,{display:'flex',gap:'6px',marginBottom:'16px',width:'88%',maxWidth:'320px'});
+  const nameInp=document.createElement('input');
+  Object.assign(nameInp.style,{flex:'1',background:'rgba(0,8,28,0.8)',border:'1px solid rgba(0,180,255,0.3)',borderRadius:'6px',color:'#0cf',fontFamily:"'Courier New',monospace",fontSize:'14px',padding:'8px 12px',outline:'none',letterSpacing:'1px'});
+  nameInp.placeholder='YOUR NAME';
+  nameInp.maxLength=16;
+  nameInp.value=localStorage.getItem('rb_name')||'';
+  const submitBtn=document.createElement('button');
+  submitBtn.className='btn-primary';
+  submitBtn.textContent='\u2191 POST';
+  Object.assign(submitBtn.style,{padding:'8px 16px',fontSize:'0.8rem',marginBottom:'0'});
+  let posted=false;
+  submitBtn.onclick=()=>{
+    if(posted)return;
+    const n=(nameInp.value.trim()||'Anonymous').slice(0,16);
+    localStorage.setItem('rb_name',n);
+    postScore(n);
+    posted=true;
+    submitBtn.textContent='\u2713 POSTED';
+    submitBtn.disabled=true;
+    Object.assign(submitBtn.style,{opacity:'0.5'});
+  };
+  nameWrap.appendChild(nameInp);nameWrap.appendChild(submitBtn);
+  ov.appendChild(nameWrap);
   ov.appendChild(btn('btn-primary','\u21BA PLAY AGAIN',startGame));
   ov.appendChild(btn('btn-secondary','\u{1F3C6} Leaderboard',openLeaderboard));
   ov.appendChild(btn('btn-secondary','\u2302 Menu',quitToMenu));
@@ -916,30 +940,47 @@ requestAnimationFrame(loop);
 
 
 // LEADERBOARD
+const LB_URL='https://retro-blaster-leaderboard.chris-d6a.workers.dev';
 function openLeaderboard(){
   document.getElementById('lb-panel').style.display='flex';
   const rows=document.getElementById('lb-rows');
   rows.textContent='';
-  const medals=['\u{1F947}','\u{1F948}','\u{1F949}'];
-  if(sd.scores.length===0){
+  const loading=document.createElement('div');
+  Object.assign(loading.style,{fontFamily:"'Courier New',monospace",color:'#446',fontSize:'12px',textAlign:'center',padding:'20px'});
+  loading.textContent='Loading...';
+  rows.appendChild(loading);
+  fetch(LB_URL+'/scores').then(r=>r.json()).then(data=>{
+    rows.textContent='';
+    const medals=['\u{1F947}','\u{1F948}','\u{1F949}'];
+    if(!data||data.length===0){
+      const d=document.createElement('div');
+      Object.assign(d.style,{fontFamily:"'Courier New',monospace",color:'#446',fontSize:'12px',textAlign:'center',padding:'20px'});
+      d.textContent='No scores yet. Play a game!';
+      rows.appendChild(d);
+    }else{
+      const top=data.slice(0,10);
+      for(let i=0;i<top.length;i++){
+        const row=document.createElement('div');
+        row.className='lb-row'+(i===0?' top1':i===1?' top2':i===2?' top3':'');
+        const rank=document.createElement('div');rank.className='lb-rank';rank.textContent=medals[i]||('#'+(i+1));
+        const nm=document.createElement('div');nm.className='lb-score';nm.style.textAlign='left';nm.textContent=top[i].name||'Anonymous';
+        const sc=document.createElement('div');sc.className='lb-score';sc.textContent=top[i].score.toLocaleString();
+        row.appendChild(rank);row.appendChild(nm);row.appendChild(sc);
+        rows.appendChild(row);
+      }
+    }
+  }).catch(()=>{
+    rows.textContent='';
     const d=document.createElement('div');
     Object.assign(d.style,{fontFamily:"'Courier New',monospace",color:'#446',fontSize:'12px',textAlign:'center',padding:'20px'});
-    d.textContent='No scores yet. Play a game\!';
+    d.textContent='Could not load scores.';
     rows.appendChild(d);
-  }else{
-    const top=sd.scores.slice(0,10);
-    for(let i=0;i<top.length;i++){
-      const row=document.createElement('div');
-      row.className='lb-row'+(i===0?' top1':i===1?' top2':i===2?' top3':'');
-      const rank=document.createElement('div');rank.className='lb-rank';rank.textContent=medals[i]||('#'+(i+1));
-      const sc=document.createElement('div');sc.className='lb-score';sc.textContent=top[i].score.toLocaleString();
-      const dt=document.createElement('div');dt.className='lb-date';dt.textContent=top[i].date;
-      row.appendChild(rank);row.appendChild(sc);row.appendChild(dt);
-      rows.appendChild(row);
-    }
-  }
+  });
 }
 function closeLeaderboard(){document.getElementById('lb-panel').style.display='none';}
+function postScore(name){
+  fetch(LB_URL+'/scores',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name||'Anonymous',score,wave})}).catch(()=>{});
+}
 
 initBG();
 </script>
