@@ -151,7 +151,7 @@ let gs='title',score=0,lives=3,wave=1,paused=false;
 let shakeAmt=0,shakeTime=0;
 let bossAlive=false,bossTimer=30;
 let waveSpawned=0,waveNeeded=6,spawnTimer=0,spawnInterval=1.8;
-let stars=[],clouds=[],trees=[];
+let stars=[];
 let player=null,bullets=[],enemies=[],powerups=[],particles=[],floatingTexts=[],boss=null;
 let comboCount=0,comboTimer=0;
 const COMBO_WINDOW=3.0;
@@ -491,27 +491,11 @@ function initBG(){
       twinklePhase:Math.random()*Math.PI*2,
       twinkleSpeed:1+Math.random()*2});
   }
-  clouds=[];
-  for(let i=0;i<8;i++){
-    clouds.push({x:Math.random()*W,y:Math.random()*H*0.6,
-      w:60+Math.random()*120,h:20+Math.random()*30,
-      sp:12+Math.random()*20,alpha:0.04+Math.random()*0.06});
-  }
-  trees=[];
-  for(let i=0;i<22;i++){
-    trees.push({x:Math.random()*W,y:Math.random()*H,
-      layers:2+Math.floor(Math.random()*3),
-      w:18+Math.random()*26,h:22+Math.random()*38,
-      sp:40+Math.random()*100,
-      c1:Math.random()<0.5?'#1a4a10':'#0d3008',
-      c2:Math.random()<0.5?'#1e5512':'#12400a'});
-  }
+
 }
 function updateBG(dt){
   gameTime+=dt;
   for(let i=0;i<stars.length;i++){stars[i].y+=stars[i].sp*dt;if(stars[i].y>H)stars[i].y=-6;}
-  for(let i=0;i<clouds.length;i++){clouds[i].x-=clouds[i].sp*dt;if(clouds[i].x<-clouds[i].w)clouds[i].x=W+clouds[i].w;}
-  for(let i=0;i<trees.length;i++){trees[i].y+=trees[i].sp*dt;if(trees[i].y>H+80){trees[i].y=-80;trees[i].x=Math.random()*W;}}
 }
 function drawBG(){
   const grad=ctx.createLinearGradient(0,0,0,H);
@@ -526,25 +510,8 @@ function drawBG(){
     ctx.beginPath();ctx.arc(s.x,s.y,s.size*0.7,0,Math.PI*2);ctx.fill();
     ctx.shadowBlur=0;
   }
-  for(let i=0;i<clouds.length;i++){
-    const c=clouds[i];
-    ctx.fillStyle='rgba(180,210,255,'+c.alpha+')';
-    ctx.beginPath();ctx.ellipse(c.x,c.y,c.w,c.h,0,0,Math.PI*2);ctx.fill();
-    ctx.beginPath();ctx.ellipse(c.x-c.w*0.3,c.y,c.w*0.6,c.h*0.7,0,0,Math.PI*2);ctx.fill();
-    ctx.beginPath();ctx.ellipse(c.x+c.w*0.3,c.y,c.w*0.6,c.h*0.7,0,0,Math.PI*2);ctx.fill();
-  }
-  for(let i=0;i<trees.length;i++){
-    const t=trees[i];
-    ctx.shadowColor='rgba(0,80,0,0.3)';ctx.shadowBlur=6;
-    for(let l=0;l<t.layers;l++){
-      const ly=t.y-l*t.h*0.4;
-      const lw=t.w*(1-l*0.25);
-      ctx.fillStyle=l===0?t.c1:t.c2;
-      ctx.beginPath();ctx.moveTo(t.x,ly-t.h*(0.8-l*0.1));
-      ctx.lineTo(t.x+lw,ly);ctx.lineTo(t.x-lw,ly);ctx.closePath();ctx.fill();
-    }
-    ctx.shadowBlur=0;
-  }
+
+
   const vg=ctx.createRadialGradient(W/2,H/2,H*0.3,W/2,H/2,H*0.85);
   vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,0,0,0.55)');
   ctx.fillStyle=vg;ctx.fillRect(0,0,W,H);
