@@ -1,6 +1,6 @@
 # Retro Blaster
 
-A free, open-source arcade shooter built with HTML5 Canvas. Play it in your browser or on mobile — no install, no account, no ads.
+A free, open-source arcade shooter. Play it in your browser or on mobile — no install, no account, no ads. Great for passing the time or 🚽 breaks. Can you crack the top 10 GLOBAL leaderboard?
 
 **Play now:** [retroblaster.tatinc.us](https://retroblaster.tatinc.us)
 
