@@ -103,6 +103,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#020814;touch-action
   <button class="btn-primary" onclick="startGame()">&#x25B6; START</button>
   <button class="btn-secondary" onclick="openLeaderboard()">&#x1F3C6; LEADERBOARD</button>
   <div id="hs-display" style="margin-top:10px;">BEST: 0</div>
+  <div style="margin-top:14px;display:flex;gap:18px;"><a href="https://github.com/tatinc23/retro-blaster" target="_blank" rel="noopener" style="font-family:'Courier New',monospace;font-size:9px;color:rgba(100,160,220,0.5);text-decoration:none;letter-spacing:1px;">GitHub</a><a href="https://tatinc.us" target="_blank" rel="noopener" style="font-family:'Courier New',monospace;font-size:9px;color:rgba(100,160,220,0.5);text-decoration:none;letter-spacing:1px;">TAT Inc</a></div>
 </div>
 
 <div id="pause-overlay">
@@ -130,6 +131,20 @@ let sd={highScore:0,gems:0,unlocked:['default'],selected:'default',upgrades:[],s
 try{const s=localStorage.getItem('1945rb');if(s)sd=JSON.parse(s);if(!sd.scores)sd.scores=[];}catch(e){}
 function save(){try{localStorage.setItem('1945rb',JSON.stringify(sd));}catch(e){}}
 document.getElementById('hs-display').textContent='BEST: '+sd.highScore;
+
+// Web Audio SFX
+const _ac=(()=>{try{return new(window.AudioContext||window.webkitAudioContext)();}catch(e){return null;}})();
+function _sfx(type){
+  if(!_ac)return;
+  if(_ac.state==='suspended')_ac.resume();
+  const o=_ac.createOscillator(),g=_ac.createGain();
+  o.connect(g);g.connect(_ac.destination);
+  if(type==='shoot'){o.type='square';o.frequency.setValueAtTime(880,_ac.currentTime);o.frequency.exponentialRampToValueAtTime(220,_ac.currentTime+0.08);g.gain.setValueAtTime(0.06,_ac.currentTime);g.gain.exponentialRampToValueAtTime(0.001,_ac.currentTime+0.08);o.start();o.stop(_ac.currentTime+0.08);}
+  else if(type==='explode'){o.type='sawtooth';o.frequency.setValueAtTime(180,_ac.currentTime);o.frequency.exponentialRampToValueAtTime(40,_ac.currentTime+0.22);g.gain.setValueAtTime(0.22,_ac.currentTime);g.gain.exponentialRampToValueAtTime(0.001,_ac.currentTime+0.22);o.start();o.stop(_ac.currentTime+0.22);}
+  else if(type==='hit'){o.type='sawtooth';o.frequency.setValueAtTime(120,_ac.currentTime);o.frequency.exponentialRampToValueAtTime(60,_ac.currentTime+0.15);g.gain.setValueAtTime(0.18,_ac.currentTime);g.gain.exponentialRampToValueAtTime(0.001,_ac.currentTime+0.15);o.start();o.stop(_ac.currentTime+0.15);}
+  else if(type==='powerup'){o.type='sine';o.frequency.setValueAtTime(440,_ac.currentTime);o.frequency.setValueAtTime(660,_ac.currentTime+0.08);o.frequency.setValueAtTime(880,_ac.currentTime+0.16);g.gain.setValueAtTime(0.18,_ac.currentTime);g.gain.exponentialRampToValueAtTime(0.001,_ac.currentTime+0.3);o.start();o.stop(_ac.currentTime+0.3);}
+  else if(type==='boss'){o.type='sawtooth';o.frequency.setValueAtTime(60,_ac.currentTime);o.frequency.exponentialRampToValueAtTime(20,_ac.currentTime+0.8);g.gain.setValueAtTime(0.35,_ac.currentTime);g.gain.exponentialRampToValueAtTime(0.001,_ac.currentTime+0.8);o.start();o.stop(_ac.currentTime+0.8);}
+}
 
 // STATE
 let gs='title',score=0,lives=3,wave=1,paused=false;
@@ -311,6 +326,7 @@ function updatePlayer(dt){
   p.fireTimer-=dt;
   if(p.fireTimer<=0){
     p.fireTimer=p.fireRate;
+    _sfx('shoot');
     mkBullet(p.x,p.y-22,0,-700,false,p.dmg);
     if(p.side){mkBullet(p.x-32,p.y,0,-630,false,1);mkBullet(p.x+32,p.y,0,-630,false,1);}
     p.muzzleFlash=0.08;
@@ -327,7 +343,7 @@ function hitPlayer(){
   if(!player)return;
   if(player.shield){player.shield=false;player.shieldTimer=0;shake(3,0.2);return;}
   if(player.invTimer>0)return;
-  lives--;player.invTimer=2.2;shake(7,0.45);
+  lives--;player.invTimer=2.2;shake(7,0.45);_sfx('hit');
   renderHeartsHUD();
   if(lives<=0){player=null;setTimeout(gameOver,900);}
 }
@@ -836,7 +852,7 @@ function checkCollisions(){
         enemies[j].hp-=b.dmg;enemies[j].flash=0.12;mkParticles(b.x,b.y);
         if(enemies[j].hp<=0){
           addScore(enemies[j].pts,enemies[j].x,enemies[j].y-20);
-          mkParticles(enemies[j].x,enemies[j].y,true);
+          mkParticles(enemies[j].x,enemies[j].y,true);_sfx('explode');
           if(Math.random()<0.1)mkPowerup(enemies[j].x,enemies[j].y);
           enemies.splice(j,1);shake(2,0.12);
         }
@@ -856,7 +872,7 @@ function checkCollisions(){
         triggerFlash('rgba(255,255,255,0.8)',0.4);
         boss=null;bossAlive=false;
         document.getElementById('boss-bar').style.display='none';
-        shake(14,0.9);showMsg('BOSS DESTROYED!');mkPowerup(W/2,180);
+        _sfx('boss');shake(14,0.9);showMsg('BOSS DESTROYED!');mkPowerup(W/2,180);
       }
     }
   }
@@ -877,7 +893,7 @@ function applyPU(t){
   if(t===0)player.side=true;
   else if(t===1)player.dmg=Math.min(4,player.dmg+1);
   else{player.shield=true;player.shieldTimer=5;}
-  showMsg(msgs[t]);shake(1,0.08);
+  showMsg(msgs[t]);shake(1,0.08);_sfx('powerup');
 }
 function shake(a,d){shakeAmt=a;shakeTime=d;}
 
