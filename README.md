@@ -59,13 +59,13 @@ The current workflow installs Node and Wrangler explicitly before deployment to 
 docs/
   index.html   # The entire game — one self-contained HTML file
   _headers     # Cloudflare Pages cache rules
-CallemiguelShooter/
-  # iOS WKWebView wrapper (internal name — requires Apple Developer account to build)
+ios/
+  # iOS WKWebView wrapper (internal project files currently live under CallemiguelShooter/)
 ```
 
 The web game lives entirely in `docs/index.html`. That's the file to edit for gameplay changes.
 
-The `CallemiguelShooter/` folder is an iOS Xcode project (internal name) that wraps the game in a native WebView. You need an Apple Developer account and your own Team ID to build it — set `DEVELOPMENT_TEAM` in Xcode under Signing & Capabilities.
+The iOS wrapper is a native WKWebView shell for Retro Blaster. Its current Xcode project files still use the legacy internal `CallemiguelShooter` path and target naming, but the app itself is Retro Blaster. You need an Apple Developer account and your own Team ID to build it — set `DEVELOPMENT_TEAM` in Xcode under Signing & Capabilities.
 
 ---
 
