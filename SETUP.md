@@ -1,6 +1,6 @@
 # Retro Blaster — iOS Setup Guide
 
-This covers building the iOS WKWebView wrapper in Xcode. The web game requires no setup — just open `docs/index.html`.
+This covers building the Retro Blaster iOS WKWebView wrapper in Xcode. The web game requires no setup — just open `docs/index.html`.
 
 ## Prerequisites
 
@@ -15,11 +15,11 @@ This covers building the iOS WKWebView wrapper in Xcode. The web game requires n
    cd retro-blaster
    open CallemiguelShooter.xcodeproj
    ```
-2. Xcode opens the `CallemiguelShooter` project (internal name — unrelated to the game's public name).
+2. Xcode opens the iOS wrapper project for Retro Blaster. Some Xcode file paths and target names still use the legacy internal `CallemiguelShooter` name.
 
 ## Set Your Team ID
 
-1. Click the project root (blue icon) → select **CallemiguelShooter** target → **Signing & Capabilities**
+1. Click the project root (blue icon) → select the app target → **Signing & Capabilities**
 2. Under **Team**, select your Apple Developer account
 
    Or manually: open `CallemiguelShooter.xcodeproj/project.pbxproj` and replace `REPLACE_WITH_TEAM_ID` with your 10-character Team ID (found at developer.apple.com → Account → Membership).
