@@ -39,6 +39,20 @@ npx serve docs
 
 ---
 
+## Deployment
+
+This repo deploys the `docs/` directory to Cloudflare Pages using GitHub Actions.
+
+Requirements:
+- the publish directory is `docs/`
+- `docs/index.html` must exist
+- the Cloudflare Pages project name in `.github/workflows/deploy.yml` must match the actual Cloudflare Pages project name
+- repository secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` must be configured
+
+The current workflow installs Node and Wrangler explicitly before deployment to avoid runner issues with missing Wrangler.
+
+---
+
 ## Project Structure
 
 ```
