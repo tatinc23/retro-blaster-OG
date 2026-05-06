@@ -5,12 +5,24 @@ Thanks for wanting to help. This is a single-file HTML5 game — easy to hack on
 ## Quick Start
 
 ```bash
-git clone https://github.com/tatinc23/callemiguel-shooter-ios.git
-cd callemiguel-shooter-ios
+git clone https://github.com/tatinc23/retro-blaster.git
+cd retro-blaster
 open docs/index.html   # or: npx serve docs
 ```
 
 No build tools, no dependencies. Edit `docs/index.html` and refresh your browser.
+
+## Deployment Notes
+
+This repo deploys the `docs/` directory to Cloudflare Pages using GitHub Actions.
+
+Workflow expectations:
+- the publish directory is `docs/`
+- `docs/index.html` must exist
+- the Cloudflare Pages project name must match the workflow value (`retro-blaster`)
+- repository secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` must be configured
+
+If deployment fails, check `.github/workflows/deploy.yml` first and verify that the Cloudflare Pages project name has not drifted from the repo/app name.
 
 ## What to Work On
 
