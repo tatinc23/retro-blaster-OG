@@ -6,6 +6,18 @@
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-fullscreen"/>
 <title>Retro Blaster</title>
+<!-- OG / Share Card -->
+<meta property="og:title" content="Retro Blaster" />
+<meta property="og:description" content="A retro space shooter. Blast waves of enemies, survive the boss, claim the top of the leaderboard." />
+<meta property="og:image" content="https://retroblaster.tatinc.us/og-card.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:url" content="https://retroblaster.tatinc.us/" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Retro Blaster" />
+<meta name="twitter:description" content="A retro space shooter. Blast waves of enemies, survive the boss, claim the top of the leaderboard." />
+<meta name="twitter:image" content="https://retroblaster.tatinc.us/og-card.png" />
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{width:100%;height:100%;overflow:hidden;background:#020814;touch-action:none;user-select:none;}
@@ -31,21 +43,94 @@ html,body{width:100%;height:100%;overflow:hidden;background:#020814;touch-action
 #wave-banner.slide-in{transition:transform 0.35s cubic-bezier(0.22,1,0.36,1);transform:translateX(0);}
 #wave-banner.slide-out{transition:transform 0.35s ease-in;transform:translateX(-110%);}
 #powerup-msg{position:absolute;top:42%;left:50%;transform:translate(-50%,-50%);color:#ff0;font-family:'Courier New',monospace;font-size:16px;font-weight:bold;pointer-events:none;opacity:0;transition:opacity 0.3s;text-shadow:0 0 12px #f80;letter-spacing:2px;white-space:nowrap;}
-#overlay{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,4,14,0.92);backdrop-filter:blur(2px);}
-.title-main{font-family:'Courier New',monospace;color:#4af;font-size:clamp(1.8rem,6vw,2.4rem);letter-spacing:6px;margin-bottom:4px;text-shadow:0 0 20px #4af,0 0 40px rgba(80,180,255,0.3);animation:titleFloat 3s ease-in-out infinite;}
-.title-sub{font-family:'Courier New',monospace;color:#6cf;font-size:1rem;letter-spacing:4px;margin-bottom:24px;text-shadow:0 0 10px rgba(100,200,255,0.5);}
-.how-to-play{width:88%;max-width:320px;margin-bottom:22px;background:rgba(0,8,28,0.7);border:1px solid rgba(0,200,255,0.18);border-radius:6px;padding:10px 14px;position:relative;overflow:hidden;}
+
+/* ── OVERLAY ── */
+#overlay{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  overflow:hidden;
+  z-index:10;
+}
+#overlay-bg-canvas{
+  position:absolute;top:0;left:0;width:100%;height:100%;
+  pointer-events:none;z-index:0;
+}
+.overlay-content{
+  position:relative;z-index:2;
+  display:flex;flex-direction:column;align-items:center;
+  padding:0 16px;
+}
+
+/* title glow */
+.title-main{
+  font-family:'Courier New',monospace;
+  color:#4af;
+  font-size:clamp(2rem,7vw,2.8rem);
+  letter-spacing:10px;
+  margin-bottom:2px;
+  text-shadow:0 0 16px #4af,0 0 40px rgba(80,180,255,0.5),0 0 80px rgba(60,140,255,0.25);
+  animation:titleFloat 3s ease-in-out infinite;
+}
+.title-sub{
+  font-family:'Courier New',monospace;
+  color:#8df;
+  font-size:1.05rem;
+  letter-spacing:8px;
+  margin-bottom:26px;
+  text-shadow:0 0 12px rgba(120,210,255,0.6);
+}
+
+/* scanline overlay on the whole screen */
+#overlay::after{
+  content:'';
+  position:absolute;inset:0;
+  background:repeating-linear-gradient(
+    0deg,
+    transparent,transparent 2px,
+    rgba(0,0,0,0.06) 2px,rgba(0,0,0,0.06) 4px
+  );
+  pointer-events:none;z-index:1;
+}
+
+.how-to-play{
+  width:88%;max-width:320px;margin-bottom:22px;
+  background:rgba(0,8,28,0.55);
+  border:1px solid rgba(0,200,255,0.22);
+  border-radius:8px;padding:10px 14px;
+  position:relative;overflow:hidden;
+  backdrop-filter:blur(6px);
+  box-shadow:0 0 24px rgba(0,140,255,0.12),inset 0 0 30px rgba(0,100,200,0.06);
+}
 .how-to-play::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,255,255,0.015) 3px,rgba(0,255,255,0.015) 4px);pointer-events:none;}
-.htp-title{font-family:'Courier New',monospace;color:rgba(0,200,255,0.5);font-size:8px;letter-spacing:4px;text-align:center;margin-bottom:8px;text-transform:uppercase;}
+.htp-title{font-family:'Courier New',monospace;color:rgba(0,200,255,0.55);font-size:8px;letter-spacing:4px;text-align:center;margin-bottom:8px;text-transform:uppercase;}
 .htp-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;}
 .htp-row{display:flex;align-items:center;gap:7px;}
 .htp-key{font-family:'Courier New',monospace;font-size:9px;color:#0cf;background:rgba(0,180,255,0.08);border:1px solid rgba(0,180,255,0.3);border-radius:3px;padding:2px 6px;white-space:nowrap;letter-spacing:0.5px;text-shadow:0 0 6px rgba(0,200,255,0.6);flex-shrink:0;}
 .htp-label{font-family:'Courier New',monospace;font-size:9px;color:rgba(160,200,220,0.7);letter-spacing:0.5px;}
-.btn-primary{background:linear-gradient(135deg,#1050a0,#1a70c8);color:#fff;border:1px solid rgba(100,180,255,0.4);padding:14px 48px;font-size:1.1rem;border-radius:30px;cursor:pointer;font-family:'Courier New',monospace;letter-spacing:3px;margin-bottom:10px;box-shadow:0 0 20px rgba(20,80,200,0.4),inset 0 1px 0 rgba(255,255,255,0.1);transition:transform 0.1s;}
+
+.btn-primary{
+  background:linear-gradient(135deg,#1050a0,#1a70c8);
+  color:#fff;border:1px solid rgba(100,180,255,0.5);
+  padding:14px 54px;font-size:1.1rem;border-radius:30px;
+  cursor:pointer;font-family:'Courier New',monospace;
+  letter-spacing:3px;margin-bottom:10px;
+  box-shadow:0 0 24px rgba(20,100,255,0.45),0 0 60px rgba(20,80,200,0.2),inset 0 1px 0 rgba(255,255,255,0.15);
+  transition:transform 0.1s,box-shadow 0.2s;
+}
+.btn-primary:hover{box-shadow:0 0 32px rgba(40,140,255,0.7),0 0 80px rgba(20,100,255,0.3),inset 0 1px 0 rgba(255,255,255,0.2);}
 .btn-primary:active{transform:scale(0.97);}
-.btn-secondary{background:rgba(10,20,50,0.8);color:#8af;border:1px solid rgba(40,100,200,0.4);padding:10px 28px;font-size:0.95rem;border-radius:30px;cursor:pointer;font-family:'Courier New',monospace;margin-bottom:8px;letter-spacing:1px;transition:transform 0.1s;}
+.btn-secondary{
+  background:rgba(10,20,50,0.7);
+  color:#8af;border:1px solid rgba(40,100,200,0.4);
+  padding:10px 28px;font-size:0.95rem;border-radius:30px;
+  cursor:pointer;font-family:'Courier New',monospace;
+  margin-bottom:8px;letter-spacing:1px;
+  backdrop-filter:blur(4px);
+  transition:transform 0.1s,border-color 0.2s;
+}
+.btn-secondary:hover{border-color:rgba(80,160,255,0.6);}
 .btn-secondary:active{transform:scale(0.97);}
-#hs-display{color:#fa0;font-family:'Courier New',monospace;font-size:13px;}
+#hs-display{color:#fa0;font-family:'Courier New',monospace;font-size:13px;text-shadow:0 0 10px rgba(255,170,0,0.6);}
 #pause-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,4,14,0.85);display:none;flex-direction:column;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
 #lb-panel{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(2,5,18,0.97);display:none;flex-direction:column;align-items:center;padding:20px 16px;overflow-y:auto;}
 .lb-row{width:100%;display:flex;justify-content:space-between;align-items:center;padding:7px 12px;margin:2px 0;border-radius:6px;font-family:'Courier New',monospace;font-size:12px;background:rgba(8,18,45,0.6);border:1px solid rgba(30,70,160,0.2);}
@@ -56,8 +141,9 @@ html,body{width:100%;height:100%;overflow:hidden;background:#020814;touch-action
 .lb-row.top2{border-color:rgba(160,160,160,0.4);background:rgba(20,20,20,0.5);}
 .lb-row.top3{border-color:rgba(180,100,0,0.4);background:rgba(30,15,0,0.5);}
 #flash-overlay{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:0;background:#fff;transition:opacity 0.05s;}
-@keyframes titleFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+@keyframes titleFloat{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-7px) scale(1.01);}}
 @keyframes bossBarShift{0%{background-position:0% 50%;}100%{background-position:100% 50%;}}
+@keyframes nebulaShift{0%{transform:scale(1) rotate(0deg);}50%{transform:scale(1.06) rotate(3deg);}100%{transform:scale(1) rotate(0deg);}}
 </style>
 </head>
 <body>
@@ -86,24 +172,31 @@ html,body{width:100%;height:100%;overflow:hidden;background:#020814;touch-action
   <div id="flash-overlay"></div>
 </div>
 
+<!-- ── LANDING OVERLAY ── -->
 <div id="overlay">
-  <div class="title-main">RETRO</div>
-  <div class="title-sub">BLASTER</div>
-  <div class="how-to-play">
-    <div class="htp-title">&#x2014; HOW TO PLAY &#x2014;</div>
-    <div class="htp-grid">
-      <div class="htp-row"><span class="htp-key">TOUCH</span><span class="htp-label">Move plane</span></div>
-      <div class="htp-row"><span class="htp-key">WASD</span><span class="htp-label">Move (desktop)</span></div>
-      <div class="htp-row"><span class="htp-key">AUTO</span><span class="htp-label">Auto-fire on</span></div>
-      <div class="htp-row"><span class="htp-key">ESC</span><span class="htp-label">Pause game</span></div>
-      <div class="htp-row"><span class="htp-key">&#x26A1;</span><span class="htp-label">Grab power-ups</span></div>
-      <div class="htp-row"><span class="htp-key">&#x1F6E1;</span><span class="htp-label">Shield = survive</span></div>
+  <canvas id="overlay-bg-canvas"></canvas>
+  <div class="overlay-content">
+    <div class="title-main">RETRO</div>
+    <div class="title-sub">BLASTER</div>
+    <div class="how-to-play">
+      <div class="htp-title">&#x2014; HOW TO PLAY &#x2014;</div>
+      <div class="htp-grid">
+        <div class="htp-row"><span class="htp-key">TOUCH</span><span class="htp-label">Move plane</span></div>
+        <div class="htp-row"><span class="htp-key">WASD</span><span class="htp-label">Move (desktop)</span></div>
+        <div class="htp-row"><span class="htp-key">AUTO</span><span class="htp-label">Auto-fire on</span></div>
+        <div class="htp-row"><span class="htp-key">ESC</span><span class="htp-label">Pause game</span></div>
+        <div class="htp-row"><span class="htp-key">&#x26A1;</span><span class="htp-label">Grab power-ups</span></div>
+        <div class="htp-row"><span class="htp-key">&#x1F6E1;</span><span class="htp-label">Shield = survive</span></div>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="startGame()">&#x25B6; START</button>
+    <button class="btn-secondary" onclick="openLeaderboard()">&#x1F3C6; LEADERBOARD</button>
+    <div id="hs-display" style="margin-top:10px;">BEST: 0</div>
+    <div style="margin-top:14px;display:flex;gap:18px;">
+      <a href="https://github.com/tatinc23/retro-blaster-OG" target="_blank" rel="noopener" style="font-family:'Courier New',monospace;font-size:9px;color:rgba(100,160,220,0.5);text-decoration:none;letter-spacing:1px;">GitHub</a>
+      <a href="https://tatinc.us" target="_blank" rel="noopener" style="font-family:'Courier New',monospace;font-size:9px;color:rgba(100,160,220,0.5);text-decoration:none;letter-spacing:1px;">TAT Inc</a>
     </div>
   </div>
-  <button class="btn-primary" onclick="startGame()">&#x25B6; START</button>
-  <button class="btn-secondary" onclick="openLeaderboard()">&#x1F3C6; LEADERBOARD</button>
-  <div id="hs-display" style="margin-top:10px;">BEST: 0</div>
-  <div style="margin-top:14px;display:flex;gap:18px;"><a href="https://github.com/tatinc23/retro-blaster" target="_blank" rel="noopener" style="font-family:'Courier New',monospace;font-size:9px;color:rgba(100,160,220,0.5);text-decoration:none;letter-spacing:1px;">GitHub</a><a href="https://tatinc.us" target="_blank" rel="noopener" style="font-family:'Courier New',monospace;font-size:9px;color:rgba(100,160,220,0.5);text-decoration:none;letter-spacing:1px;">TAT Inc</a></div>
 </div>
 
 <div id="pause-overlay">
@@ -120,6 +213,180 @@ html,body{width:100%;height:100%;overflow:hidden;background:#020814;touch-action
 </div>
 
 <script>
+/* =====================================================
+   ANIMATED GALAXY BACKGROUND FOR THE LANDING OVERLAY
+   ===================================================== */
+(function(){
+  const oc = document.getElementById('overlay-bg-canvas');
+  const octx = oc.getContext('2d');
+  let OW, OH;
+
+  // Star layers (3 parallax depths)
+  const LAYERS = [
+    {count:160, speedMult:0.18, sizeRange:[0.3,0.9],  alpha:[0.2,0.55]},
+    {count:80,  speedMult:0.55, sizeRange:[0.5,1.4],  alpha:[0.3,0.75]},
+    {count:30,  speedMult:1.1,  sizeRange:[1.0,2.2],  alpha:[0.5,1.0], glow:true}
+  ];
+  const layerStars = [];
+
+  // Shooting star pool
+  const shootingStars = [];
+  let nextShoot = 2;
+
+  // Nebula blobs
+  const NEBULAE = [
+    {cx:0.75, cy:0.30, rx:0.40, ry:0.28, col:'rgba(60,0,120,', base:0.13, anim:{sx:0.8,sy:0.7,spd:0.00012}},
+    {cx:0.20, cy:0.65, rx:0.30, ry:0.22, col:'rgba(0,40,120,',  base:0.10, anim:{sx:0.9,sy:1.1,spd:0.00009}},
+    {cx:0.55, cy:0.80, rx:0.25, ry:0.18, col:'rgba(80,0,60,',   base:0.08, anim:{sx:1.05,sy:0.95,spd:0.00015}}
+  ];
+
+  function resize(){
+    OW = oc.width  = oc.offsetWidth  || window.innerWidth;
+    OH = oc.height = oc.offsetHeight || window.innerHeight;
+    buildStars();
+  }
+
+  function buildStars(){
+    layerStars.length = 0;
+    LAYERS.forEach(function(layer){
+      const arr = [];
+      for(let i=0;i<layer.count;i++){
+        arr.push({
+          x: Math.random()*OW,
+          y: Math.random()*OH,
+          r: layer.sizeRange[0] + Math.random()*(layer.sizeRange[1]-layer.sizeRange[0]),
+          speed: (30 + Math.random()*50) * layer.speedMult,
+          alpha: layer.alpha[0] + Math.random()*(layer.alpha[1]-layer.alpha[0]),
+          twinkle: Math.random()*Math.PI*2,
+          twinkleSpd: 0.8 + Math.random()*2.4,
+          glow: layer.glow && Math.random()<0.5
+        });
+      }
+      layerStars.push(arr);
+    });
+  }
+
+  function spawnShootingStar(){
+    const fromTop = Math.random()<0.6;
+    const x = Math.random()*OW*(fromTop?1:0.3);
+    const y = fromTop ? -4 : Math.random()*OH*0.4;
+    const angle = (25 + Math.random()*20) * Math.PI/180;
+    const speed = 380 + Math.random()*280;
+    shootingStars.push({
+      x:x, y:y,
+      vx: Math.cos(angle)*speed,
+      vy: Math.sin(angle)*speed,
+      len: 60 + Math.random()*120,
+      life:1, decay: 0.6 + Math.random()*0.5,
+      alpha: 0.7 + Math.random()*0.3
+    });
+  }
+
+  let last = 0, elapsed = 0;
+  function frame(ts){
+    if(!last) last=ts;
+    const dt = Math.min(0.05,(ts-last)/1000);
+    last = ts;
+    elapsed += dt;
+
+    if(document.getElementById('overlay').style.display === 'none'){
+      requestAnimationFrame(frame); return;
+    }
+
+    octx.clearRect(0,0,OW,OH);
+
+    // Deep space gradient
+    const bg = octx.createLinearGradient(0,0,0,OH);
+    bg.addColorStop(0,  '#000408');
+    bg.addColorStop(0.4,'#010818');
+    bg.addColorStop(1,  '#02101e');
+    octx.fillStyle = bg;
+    octx.fillRect(0,0,OW,OH);
+
+    // Nebulae
+    NEBULAE.forEach(function(nb){
+      const t = elapsed * nb.anim.spd * 1000;
+      const scaleX = nb.anim.sx + Math.sin(t*1.3)*0.08;
+      const scaleY = nb.anim.sy + Math.cos(t*1.1)*0.08;
+      const cx = nb.cx*OW, cy = nb.cy*OH;
+      const rx = nb.rx*OW*scaleX, ry = nb.ry*OH*scaleY;
+      const grd = octx.createRadialGradient(cx,cy,0,cx,cy,Math.max(rx,ry));
+      grd.addColorStop(0,   nb.col+(nb.base+0.04)+')');
+      grd.addColorStop(0.45,nb.col+(nb.base*0.6)+')');
+      grd.addColorStop(1,   nb.col+'0)');
+      octx.save();
+      octx.translate(cx,cy);
+      octx.scale(rx/Math.max(rx,ry), ry/Math.max(rx,ry));
+      octx.translate(-cx,-cy);
+      octx.fillStyle = grd;
+      octx.beginPath();
+      octx.arc(cx,cy,Math.max(rx,ry),0,Math.PI*2);
+      octx.fill();
+      octx.restore();
+    });
+
+    // Stars (3 layers)
+    layerStars.forEach(function(arr){
+      arr.forEach(function(s){
+        s.y += s.speed * dt;
+        if(s.y > OH+4){ s.y=-4; s.x=Math.random()*OW; }
+        const tw = Math.sin(elapsed*s.twinkleSpd + s.twinkle)*0.5+0.5;
+        const a = s.alpha * (0.6+tw*0.4);
+        if(s.glow){
+          const grd = octx.createRadialGradient(s.x,s.y,0,s.x,s.y,s.r*3.5);
+          grd.addColorStop(0,'rgba(200,230,255,'+a+')');
+          grd.addColorStop(1,'rgba(100,160,255,0)');
+          octx.fillStyle=grd;
+          octx.beginPath();octx.arc(s.x,s.y,s.r*3.5,0,Math.PI*2);octx.fill();
+        }
+        octx.globalAlpha = a;
+        octx.fillStyle = '#cce8ff';
+        octx.beginPath();octx.arc(s.x,s.y,s.r,0,Math.PI*2);octx.fill();
+        octx.globalAlpha = 1;
+      });
+    });
+
+    // Shooting stars
+    nextShoot -= dt;
+    if(nextShoot<=0){ spawnShootingStar(); nextShoot = 1.8+Math.random()*5; }
+    for(let i=shootingStars.length-1;i>=0;i--){
+      const ss = shootingStars[i];
+      ss.x += ss.vx*dt; ss.y += ss.vy*dt;
+      ss.life -= ss.decay*dt;
+      if(ss.life<=0||ss.x>OW+20||ss.y>OH+20){ shootingStars.splice(i,1); continue; }
+      const tailX = ss.x - (ss.vx/Math.hypot(ss.vx,ss.vy))*ss.len;
+      const tailY = ss.y - (ss.vy/Math.hypot(ss.vx,ss.vy))*ss.len;
+      const grd = octx.createLinearGradient(tailX,tailY,ss.x,ss.y);
+      grd.addColorStop(0,'rgba(255,255,255,0)');
+      grd.addColorStop(0.6,'rgba(180,220,255,'+(ss.alpha*ss.life*0.4)+')');
+      grd.addColorStop(1,'rgba(255,255,255,'+(ss.alpha*ss.life)+')');
+      octx.strokeStyle = grd;
+      octx.lineWidth = 1.5;
+      octx.beginPath();octx.moveTo(tailX,tailY);octx.lineTo(ss.x,ss.y);octx.stroke();
+      // head sparkle
+      octx.globalAlpha = ss.life*ss.alpha;
+      octx.fillStyle='#fff';
+      octx.beginPath();octx.arc(ss.x,ss.y,2,0,Math.PI*2);octx.fill();
+      octx.globalAlpha=1;
+    }
+
+    // Vignette
+    const vig = octx.createRadialGradient(OW/2,OH/2,OH*0.25,OW/2,OH/2,OH*0.9);
+    vig.addColorStop(0,'rgba(0,0,0,0)');
+    vig.addColorStop(1,'rgba(0,0,0,0.72)');
+    octx.fillStyle=vig;octx.fillRect(0,0,OW,OH);
+
+    requestAnimationFrame(frame);
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+  requestAnimationFrame(frame);
+})();
+
+/* =====================================================
+   GAME ENGINE (unchanged from original)
+   ===================================================== */
 const cv=document.getElementById('gc'),ctx=cv.getContext('2d');
 const wrap=document.getElementById('wrap');
 let W,H;
@@ -225,25 +492,29 @@ function quitToMenu(){
   gs='title';
   const ov=document.getElementById('overlay');
   ov.style.display='flex';
-  // rebuild title DOM safely
-  ov.textContent='';
+  // rebuild title DOM safely — keep canvas bg, replace overlay-content
+  let oc2=document.getElementById('overlay-content-inner');
+  if(!oc2){
+    // find .overlay-content
+    oc2=ov.querySelector('.overlay-content');
+  }
+  if(oc2) oc2.innerHTML='';
+  else{ oc2=document.createElement('div');oc2.className='overlay-content';ov.appendChild(oc2);}
   function el(tag,cls,txt,style){const e=document.createElement(tag);if(cls)e.className=cls;if(txt)e.textContent=txt;if(style)Object.assign(e.style,style);return e;}
-  const tw=el('div','title-wrap',null);
-  tw.appendChild(el('span','title-main','RETRO BLASTER'));
-  tw.appendChild(el('div','title-divider',null));
-  ov.appendChild(tw);
+  oc2.appendChild(el('div','title-main','RETRO'));
+  oc2.appendChild(el('div','title-sub','BLASTER'));
   const htp=el('div','how-to-play',null);
   const htpTitle=el('div','htp-title','\u2014 HOW TO PLAY \u2014');
   const htpGrid=el('div','htp-grid',null);
   [['TOUCH','Move plane'],['WASD','Move (desktop)'],['AUTO','Auto-fire on'],['ESC','Pause game'],['\u26A1','Grab power-ups'],['\u{1F6E1}','Shield = survive']].forEach(([k,l])=>{const r=el('div','htp-row',null);const key=el('span','htp-key',k);const lbl=el('span','htp-label',l);r.appendChild(key);r.appendChild(lbl);htpGrid.appendChild(r);});
   htp.appendChild(htpTitle);htp.appendChild(htpGrid);
-  ov.appendChild(htp);
+  oc2.appendChild(htp);
   function btn(cls,txt,fn){const b=el('button',cls,txt);b.onclick=fn;return b;}
-  ov.appendChild(btn('btn-primary','\u25B6 START',startGame));
-  ov.appendChild(btn('btn-secondary','\u{1F3C6} LEADERBOARD',openLeaderboard));
-  const hs=el('div','','BEST: '+sd.highScore,{marginTop:'10px',fontFamily:"'Courier New',monospace",color:'#fa0',fontSize:'13px'});
+  oc2.appendChild(btn('btn-primary','\u25B6 START',startGame));
+  oc2.appendChild(btn('btn-secondary','\u{1F3C6} LEADERBOARD',openLeaderboard));
+  const hs=el('div','','BEST: '+sd.highScore,{marginTop:'10px',fontFamily:"'Courier New',monospace",color:'#fa0',fontSize:'13px',textShadow:'0 0 10px rgba(255,170,0,0.6)'});
   hs.id='hs-display';
-  ov.appendChild(hs);
+  oc2.appendChild(hs);
 }
 function saveScore(){
   const entry={score,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'})};
@@ -257,12 +528,14 @@ function gameOver(){
   gs='gameover';saveScore();
   const ov=document.getElementById('overlay');
   ov.style.display='flex';
-  ov.textContent='';
+  const oc2=ov.querySelector('.overlay-content');
+  if(oc2)oc2.innerHTML='';
   function el(tag,css,txt){const e=document.createElement(tag);Object.assign(e.style,css);if(txt)e.textContent=txt;return e;}
   function btn(cls,txt,fn){const b=document.createElement('button');b.className=cls;b.textContent=txt;b.onclick=fn;return b;}
-  ov.appendChild(el('div',{fontFamily:"'Courier New',monospace",color:'#f44',fontSize:'2.2rem',letterSpacing:'4px',marginBottom:'10px',textShadow:'0 0 20px #f44'},'GAME OVER'));
-  ov.appendChild(el('div',{fontFamily:"'Courier New',monospace",color:'#f88',fontSize:'1.3rem',marginBottom:'4px',letterSpacing:'2px'},'SCORE: '+score));
-  ov.appendChild(el('div',{fontFamily:"'Courier New',monospace",color:'#fa0',fontSize:'1rem',marginBottom:'16px'},'BEST: '+sd.highScore));
+  const root=oc2||ov;
+  root.appendChild(el('div',{fontFamily:"'Courier New',monospace",color:'#f44',fontSize:'2.2rem',letterSpacing:'4px',marginBottom:'10px',textShadow:'0 0 20px #f44'},'GAME OVER'));
+  root.appendChild(el('div',{fontFamily:"'Courier New',monospace",color:'#f88',fontSize:'1.3rem',marginBottom:'4px',letterSpacing:'2px'},'SCORE: '+score));
+  root.appendChild(el('div',{fontFamily:"'Courier New',monospace",color:'#fa0',fontSize:'1rem',marginBottom:'16px'},'BEST: '+sd.highScore));
   const nameWrap=document.createElement('div');
   Object.assign(nameWrap.style,{display:'flex',gap:'6px',marginBottom:'16px',width:'88%',maxWidth:'320px'});
   const nameInp=document.createElement('input');
@@ -286,10 +559,10 @@ function gameOver(){
     Object.assign(submitBtn.style,{opacity:'0.5'});
   };
   nameWrap.appendChild(nameInp);nameWrap.appendChild(submitBtn);
-  ov.appendChild(nameWrap);
-  ov.appendChild(btn('btn-primary','\u21BA PLAY AGAIN',startGame));
-  ov.appendChild(btn('btn-secondary','\u{1F3C6} Leaderboard',openLeaderboard));
-  ov.appendChild(btn('btn-secondary','\u2302 Menu',quitToMenu));
+  root.appendChild(nameWrap);
+  root.appendChild(btn('btn-primary','\u21BA PLAY AGAIN',startGame));
+  root.appendChild(btn('btn-secondary','\u{1F3C6} Leaderboard',openLeaderboard));
+  root.appendChild(btn('btn-secondary','\u2302 Menu',quitToMenu));
 }
 
 // PLAYER
@@ -491,7 +764,6 @@ function initBG(){
       twinklePhase:Math.random()*Math.PI*2,
       twinkleSpeed:1+Math.random()*2});
   }
-
 }
 function updateBG(dt){
   gameTime+=dt;
@@ -510,8 +782,6 @@ function drawBG(){
     ctx.beginPath();ctx.arc(s.x,s.y,s.size*0.7,0,Math.PI*2);ctx.fill();
     ctx.shadowBlur=0;
   }
-
-
   const vg=ctx.createRadialGradient(W/2,H/2,H*0.3,W/2,H/2,H*0.85);
   vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,0,0,0.55)');
   ctx.fillStyle=vg;ctx.fillRect(0,0,W,H);
@@ -531,7 +801,6 @@ function drawPlayer(){
   const p=player;const{x,y}=p;
   const col=getPlaneColors();
   ctx.save();
-  // exhaust
   for(let i=0;i<p.exhaustTrail.length;i++){
     const t=p.exhaustTrail[i];if(t.life<=0)continue;
     ctx.globalAlpha=t.life*0.7;
@@ -543,7 +812,6 @@ function drawPlayer(){
     ctx.fillStyle=eg;ctx.beginPath();ctx.arc(t.x,t.y,t.r*2,0,Math.PI*2);ctx.fill();
   }
   ctx.globalAlpha=1;
-  // shield
   if(p.shield){
     const sa=p.shieldAngle;
     ctx.strokeStyle='rgba(80,200,255,0.7)';ctx.lineWidth=2.5;
@@ -554,7 +822,6 @@ function drawPlayer(){
     ctx.strokeStyle='rgba(80,200,255,0.2)';ctx.lineWidth=8;
     ctx.beginPath();ctx.arc(x,y,32,0,Math.PI*2);ctx.stroke();
   }
-  // muzzle flash
   if(p.muzzleFlash>0){
     const mf=p.muzzleFlash/0.08;
     ctx.shadowColor='rgba(255,255,200,0.9)';ctx.shadowBlur=18;
@@ -562,13 +829,11 @@ function drawPlayer(){
     ctx.beginPath();ctx.arc(x,y-26,7*mf,0,Math.PI*2);ctx.fill();
     ctx.shadowBlur=0;
   }
-  // wings
   const wg=ctx.createLinearGradient(x-40,y,x+40,y);
   wg.addColorStop(0,col.wing+'80');wg.addColorStop(0.5,col.wing);wg.addColorStop(1,col.wing+'80');
   ctx.fillStyle=wg;
   ctx.beginPath();ctx.moveTo(x-10,y+8);ctx.lineTo(x-40,y+20);ctx.lineTo(x-28,y+28);ctx.lineTo(x-10,y+14);ctx.closePath();ctx.fill();
   ctx.beginPath();ctx.moveTo(x+10,y+8);ctx.lineTo(x+40,y+20);ctx.lineTo(x+28,y+28);ctx.lineTo(x+10,y+14);ctx.closePath();ctx.fill();
-  // body
   const bg=ctx.createLinearGradient(x-12,y,x+12,y);
   bg.addColorStop(0,col.body1);bg.addColorStop(0.4,col.body0+'dd');
   bg.addColorStop(0.5,'rgba(255,255,255,0.15)');
@@ -920,7 +1185,6 @@ function loop(ts){
   requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
-
 
 // LEADERBOARD
 const LB_URL='https://retro-blaster-leaderboard.chris-d6a.workers.dev';
